@@ -16,10 +16,8 @@ const DEBOUNCE_TIME = 600;
 const state = {
   bcv: 0,
   usdt: 0,
-  avgRate: 0,
-  manualOverrideAvg: false,
   price_bcv_usd: 0,
-  price_avg_usd: 0,
+  price_parallel_usd: 0,
   saveTimeout: null,
   lastUpdatedIso: null
 };
@@ -38,20 +36,17 @@ function initDomReferences() {
     usdtLoader: document.getElementById('usdtLoader'),
     rateDiff: document.getElementById('rateDiff'),
     apiTimestamp: document.getElementById('apiTimestamp'),
-    avgRateInput: document.getElementById('avgRateInput'),
     
     price_bcv_usd_input: document.getElementById('price_bcv_usd_input'),
     price_bcv_ves_input: document.getElementById('price_bcv_ves_input'),
-    price_avg_usd_input: document.getElementById('price_avg_usd_input'),
-    price_avg_ves_input: document.getElementById('price_avg_ves_input'),
+    price_parallel_usd_input: document.getElementById('price_parallel_usd_input'),
+    price_parallel_ves_input: document.getElementById('price_parallel_ves_input'),
     
     recommendationBox: document.getElementById('recommendationBox'),
     finalVerdict: document.getElementById('finalVerdict'),
     savingsText: document.getElementById('savingsText'),
-
-    usdtResultCard: document.getElementById('usdtResultCard'), 
-    usdtTransferCost: document.getElementById('usdtTransferCost'),
-    usdtSubtitle: document.getElementById('usdtSubtitle'), 
+    equivalenceBox: document.getElementById('equivalenceBox'),
+    equivalenceText: document.getElementById('equivalenceText'),
     
     btnCalculate: document.getElementById('btnCalculate'),
     btnEdit: document.getElementById('btnEdit'), 
@@ -70,7 +65,6 @@ function initDomReferences() {
  * Persistencia en LocalStorage con Debounce
  */
 function saveState() {
-  // Verificar si el usuario ha consentido guardar preferencias
   if (window.ConsentManager && !window.ConsentManager.hasConsent('preferences')) {
     return;
   }
@@ -80,10 +74,8 @@ function saveState() {
     const dataToSave = {
       bcv: parseFloat(els.bcvDisplay.value) || 0,
       usdt: parseFloat(els.usdtDisplay.value) || 0,
-      avgRate: parseFloat(els.avgRateInput.value) || 0,
       price_bcv_usd: parseFloat(els.price_bcv_usd_input.value) || 0, 
-      price_avg_usd: parseFloat(els.price_avg_usd_input.value) || 0, 
-      manualOverrideAvg: state.manualOverrideAvg,
+      price_parallel_usd: parseFloat(els.price_parallel_usd_input.value) || 0,
       lastUpdatedIso: state.lastUpdatedIso
     };
     try {
@@ -103,15 +95,15 @@ function loadSavedState() {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      state.manualOverrideAvg = data.manualOverrideAvg === true;
       state.lastUpdatedIso = data.lastUpdatedIso || null;
 
       if (data.bcv > 0) els.bcvDisplay.value = data.bcv.toFixed(2);
       if (data.usdt > 0) els.usdtDisplay.value = data.usdt.toFixed(2);
-      if (data.avgRate > 0) els.avgRateInput.value = data.avgRate.toFixed(2);
 
       if (data.price_bcv_usd > 0) els.price_bcv_usd_input.value = data.price_bcv_usd.toFixed(2);
-      if (data.price_avg_usd > 0) els.price_avg_usd_input.value = data.price_avg_usd.toFixed(2);
+      // Compatibilidad con versiones anteriores que guardaban price_avg_usd
+      const savedParallel = data.price_parallel_usd || data.price_avg_usd || 0;
+      if (savedParallel > 0) els.price_parallel_usd_input.value = savedParallel.toFixed(2);
 
       if (state.lastUpdatedIso && els.apiTimestamp) {
         els.apiTimestamp.textContent = `Actualizado: ${formatRateDate(state.lastUpdatedIso)}`;
@@ -124,7 +116,6 @@ function loadSavedState() {
   }
 
   updateRateDiffDisplay();
-  recalculateAverageRate(true);
   updateCalculatedVesOutputs();
   return loaded;
 }
@@ -140,7 +131,7 @@ function setRateLoaders(visible) {
 /**
  * Consulta la API api-dolar.leandrus.net y actualiza los valores
  */
-async function fetchRates(isReset = false) {
+async function fetchRates() {
   setRateLoaders(true);
 
   try {
@@ -168,12 +159,6 @@ async function fetchRates(isReset = false) {
   } finally {
     setRateLoaders(false);
     updateRateDiffDisplay();
-
-    if (isReset) {
-      state.manualOverrideAvg = false;
-    }
-
-    recalculateAverageRate();
     updateCalculatedVesOutputs();
     saveState();
   }
@@ -197,33 +182,17 @@ function updateRateDiffDisplay() {
 }
 
 /**
- * Recalcula la Tasa Promedio recomendada para efectivo
- */
-function recalculateAverageRate(force = false) {
-  if (state.manualOverrideAvg && !force) {
-    return;
-  }
-
-  const bcv = parseFloat(els.bcvDisplay.value) || 0;
-  const usdt = parseFloat(els.usdtDisplay.value) || 0;
-
-  state.avgRate = Calculator.calculateDefaultAverage(bcv, usdt);
-  els.avgRateInput.value = state.avgRate.toFixed(2);
-  updateCalculatedVesOutputs(true);
-}
-
-/**
  * Actualiza los campos calculados de costo en VES
  */
 function updateCalculatedVesOutputs(skipSave = false) {
   const bcvRate = parseFloat(els.bcvDisplay.value) || 0;
-  const avgRate = parseFloat(els.avgRateInput.value) || 0;
+  const parallelRate = parseFloat(els.usdtDisplay.value) || 0;
 
   const bcvUsd = parseFloat(els.price_bcv_usd_input.value) || 0;
-  const avgUsd = parseFloat(els.price_avg_usd_input.value) || 0;
+  const parallelUsd = parseFloat(els.price_parallel_usd_input.value) || 0;
 
   els.price_bcv_ves_input.value = bcvUsd > 0 && bcvRate > 0 ? Calculator.convertToVes(bcvUsd, bcvRate).toFixed(2) : '';
-  els.price_avg_ves_input.value = avgUsd > 0 && avgRate > 0 ? Calculator.convertToVes(avgUsd, avgRate).toFixed(2) : '';
+  els.price_parallel_ves_input.value = parallelUsd > 0 && parallelRate > 0 ? Calculator.convertToVes(parallelUsd, parallelRate).toFixed(2) : '';
 
   if (!skipSave) {
     saveState();
@@ -235,12 +204,11 @@ function updateCalculatedVesOutputs(skipSave = false) {
  */
 function analyzePayment() {
   const bcvCostVes = parseFloat(els.price_bcv_ves_input.value) || 0;
-  const avgCostVes = parseFloat(els.price_avg_ves_input.value) || 0;
+  const parallelCostVes = parseFloat(els.price_parallel_ves_input.value) || 0;
   const usdtRate = parseFloat(els.usdtDisplay.value) || 0;
   const bcvRate = parseFloat(els.bcvDisplay.value) || 0;
-  const avgRate = parseFloat(els.avgRateInput.value) || 0;
 
-  const analysis = Calculator.analyzePaymentMethod(bcvCostVes, avgCostVes, usdtRate, bcvRate, avgRate);
+  const analysis = Calculator.analyzePaymentMethod(bcvCostVes, parallelCostVes, usdtRate, bcvRate, usdtRate);
 
   if (!analysis.isValid) {
     alert('Por favor, ingresa los montos en Dólares ($) para ambas opciones y verifica que las tasas estén cargadas.');
@@ -252,60 +220,85 @@ function analyzePayment() {
   els.section2.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // 1. Mostrar costo equivalente en USDT
-  els.usdtTransferCost.textContent = `$ ${analysis.usdtEquivalent.toFixed(2)}`;
-  els.usdtSubtitle.innerHTML = `
-    Si decides transferir vía <strong>Binance P2P / USDT</strong>, deberás enviar 
-    <strong style="color: #fcd34d;">$ ${analysis.usdtEquivalent.toFixed(2)} USDT</strong> 
-    para cubrir el costo más económico en Bolívares.
-  `;
-
-  // 2. Presentar recomendación económica
+  // Presentar recomendación económica en tarjeta unificada
   const card = els.recommendationBox;
   const verdict = els.finalVerdict;
   const savings = els.savingsText;
+  const eqText = els.equivalenceText;
 
   card.className = 'card results-card';
   verdict.className = 'results-verdict';
 
+  const bcvUsd = parseFloat(els.price_bcv_usd_input.value) || 0;
+  const parallelUsd = parseFloat(els.price_parallel_usd_input.value) || 0;
+
   if (analysis.winner === 'bcv') {
     card.classList.add('border-bcv');
     verdict.classList.add('bcv-won');
-    verdict.textContent = 'Bolívares (Tasa Oficial)';
+    verdict.textContent = 'Bolívares (Tasa Oficial BCV)';
 
     savings.innerHTML = `
-      <span style="font-weight: 700; color: #f1f5f9;">El costo es menor pagando con la Tasa Oficial BCV</span>
+      <span class="savings-lead">Te conviene pagar en Bolívares</span>
       <span class="savings-highlight bcv">Ahorras ${Calculator.formatVes(analysis.diffVes)}</span>
-      <span style="font-size: 0.8rem; color: #94a3b8;">
-        Equivalente a <strong style="color: #34d399;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
+      <span class="savings-sub">
+        Equivale a <strong style="color: #34d399;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
         (<strong style="color: #34d399;">${analysis.diffPercentage.toFixed(2)}%</strong> menos).
       </span>
-      <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.5rem;">
-        Costo Oficial: ${Calculator.formatVes(analysis.bcvCostVes)} | Costo Físicos: ${Calculator.formatVes(analysis.avgCostVes)}
+      <div class="results-comparison-grid">
+        <div class="res-item">
+          <span>En Bolívares (BCV):</span>
+          <strong>${Calculator.formatVes(analysis.bcvCostVes)}</strong>
+          <small style="color: #64748b;">($ ${bcvUsd.toFixed(2)})</small>
+        </div>
+        <div class="res-item">
+          <span>En Dólares (Efectivo/USDT):</span>
+          <strong>${Calculator.formatVes(analysis.parallelCostVes)}</strong>
+          <small style="color: #64748b;">($ ${parallelUsd.toFixed(2)})</small>
+        </div>
       </div>
     `;
-  } else if (analysis.winner === 'avg') {
+
+    eqText.innerHTML = `
+      <strong>¿Tienes Dólares o USDT?</strong> Te rinde más cambiarlos a Bolívares. Solo necesitas vender <strong>$ ${analysis.usdtEquivalent.toFixed(2)}</strong> para cubrir este pago.
+    `;
+  } else if (analysis.winner === 'parallel') {
     card.classList.add('border-avg');
     verdict.classList.add('avg-won');
-    verdict.textContent = 'Dólares (Tasa Promedio)';
+    verdict.textContent = 'Dólares (Efectivo o USDT)';
 
     savings.innerHTML = `
-      <span style="font-weight: 700; color: #f1f5f9;">El costo es menor pagando en Dólares Físicos</span>
+      <span class="savings-lead">Te conviene pagar en Dólares</span>
       <span class="savings-highlight avg">Ahorras ${Calculator.formatVes(analysis.diffVes)}</span>
-      <span style="font-size: 0.8rem; color: #94a3b8;">
-        Equivalente a <strong style="color: #60a5fa;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
+      <span class="savings-sub">
+        Equivale a <strong style="color: #60a5fa;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
         (<strong style="color: #60a5fa;">${analysis.diffPercentage.toFixed(2)}%</strong> menos).
       </span>
-      <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.5rem;">
-        Costo Oficial: ${Calculator.formatVes(analysis.bcvCostVes)} | Costo Físicos: ${Calculator.formatVes(analysis.avgCostVes)}
+      <div class="results-comparison-grid">
+        <div class="res-item">
+          <span>En Dólares (Efectivo/USDT):</span>
+          <strong>${Calculator.formatVes(analysis.parallelCostVes)}</strong>
+          <small style="color: #64748b;">($ ${parallelUsd.toFixed(2)})</small>
+        </div>
+        <div class="res-item">
+          <span>En Bolívares (BCV):</span>
+          <strong>${Calculator.formatVes(analysis.bcvCostVes)}</strong>
+          <small style="color: #64748b;">($ ${bcvUsd.toFixed(2)})</small>
+        </div>
       </div>
+    `;
+
+    eqText.innerHTML = `
+      <strong>Paga en Dólares:</strong> Da igual si entregas billetes físicos o transfieres por Binance USDT, pagas exactamente lo mismo: <strong>$ ${parallelUsd.toFixed(2)}</strong>.
     `;
   } else {
     card.classList.add('border-default');
     verdict.classList.add('equal');
-    verdict.textContent = 'Indistinto';
+    verdict.textContent = 'Indistinto (Mismo costo)';
     savings.innerHTML = `
-      <span style="color: #f1f5f9;">La diferencia es insignificante (&lt; 0.01 Bs). Ambas opciones representan el mismo desembolso.</span>
+      <span style="color: #f1f5f9;">Ambas opciones representan exactamente el mismo desembolso (${Calculator.formatVes(analysis.bcvCostVes)}).</span>
+    `;
+    eqText.innerHTML = `
+      El costo es idéntico tanto en Bolívares como en Dólares (Efectivo o Binance USDT).
     `;
   }
 }
@@ -317,7 +310,6 @@ function showInputsView() {
   els.section1.classList.remove('hidden');
   els.section2.classList.add('hidden');
   updateRateDiffDisplay();
-  recalculateAverageRate();
   updateCalculatedVesOutputs();
 }
 
@@ -327,11 +319,10 @@ function showInputsView() {
 function handleResetAll() {
   els.price_bcv_usd_input.value = '';
   els.price_bcv_ves_input.value = '';
-  els.price_avg_usd_input.value = '';
-  els.price_avg_ves_input.value = '';
+  els.price_parallel_usd_input.value = '';
+  els.price_parallel_ves_input.value = '';
 
-  state.manualOverrideAvg = false;
-  fetchRates(true);
+  fetchRates();
   showInputsView();
 }
 
@@ -343,7 +334,7 @@ const legalDocs = {
     title: 'Términos y Condiciones de Uso',
     html: `
       <h3>1. Naturaleza del Servicio</h3>
-      <p><strong>¿Cómo Pago en Venezuela?</strong> es una herramienta de software web de libre acceso orientada exclusivamente al cálculo matemático comparativo y a la orientación referencial de costos entre tasas de cambio oficiales (BCV) y referenciales de mercado (P2P/USDT).</p>
+      <p><strong>¿Cómo Pago en Venezuela?</strong> es una herramienta de software web de libre acceso orientada exclusivamente al cálculo matemático comparativo y a la orientación referencial de costos entre tasas de cambio oficiales (BCV) y de mercado (Paralelo / USDT Binance).</p>
       
       <h3>2. Exclusión de Servicios Financieros</h3>
       <p>Esta plataforma <strong>NO constituye entidad bancaria, casa de cambio, procesador de pagos, transmisor de dinero ni agente de retención</strong>. No se reciben, transfieren, custodian ni procesan fondos de ninguna naturaleza.</p>
@@ -433,7 +424,6 @@ function closeLegalModal() {
 function bindEvents() {
   const handleRateChange = () => {
     updateRateDiffDisplay();
-    recalculateAverageRate();
     updateCalculatedVesOutputs();
     saveState();
   };
@@ -447,19 +437,11 @@ function bindEvents() {
     els.bcvDisplay.addEventListener(evt, handleRateChange);
     els.usdtDisplay.addEventListener(evt, handleRateChange);
     els.price_bcv_usd_input.addEventListener(evt, handlePriceInput);
-    els.price_avg_usd_input.addEventListener(evt, handlePriceInput);
-  });
-
-  // Tasa promedio editable
-  els.avgRateInput.addEventListener('input', (e) => {
-    state.manualOverrideAvg = true;
-    state.avgRate = parseFloat(e.target.value) || 0;
-    updateCalculatedVesOutputs();
-    saveState();
+    els.price_parallel_usd_input.addEventListener(evt, handlePriceInput);
   });
 
   // Tecla Enter para calcular rápido en los inputs USD
-  [els.price_bcv_usd_input, els.price_avg_usd_input].forEach(input => {
+  [els.price_bcv_usd_input, els.price_parallel_usd_input].forEach(input => {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -509,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindEvents();
 
   const hasData = loadSavedState();
-  if (hasData && (parseFloat(els.price_bcv_usd_input.value) > 0 || parseFloat(els.price_avg_usd_input.value) > 0)) {
+  if (hasData && (parseFloat(els.price_bcv_usd_input.value) > 0 || parseFloat(els.price_parallel_usd_input.value) > 0)) {
     showInputsView();
   } else {
     els.section2.classList.add('hidden');

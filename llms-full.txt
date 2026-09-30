@@ -21,26 +21,21 @@ La aplicación permite que cualquier usuario ingrese una cotización en USD seg�
 
 ## 3. Modelo Matemático y Algoritmos
 
-### 3.1. Tasa Promedio Ponderada para Dólares Físicos
-Por defecto, la herramienta calcula la tasa para efectivo aplicando la siguiente convención matemática:
-$$\text{Tasa Promedio} = \left(\frac{\text{BCV} + \text{USDT}}{2}\right) \times 1.10$$
-*Nota:* El usuario puede en todo momento modificar o sobreescribir manualmente este valor en la interfaz según las condiciones de su negociación personal.
-
-### 3.2. Brecha Cambiaria
+### 3.1. Brecha Cambiaria
 $$\Delta_{\text{Bs}} = \text{USDT} - \text{BCV}$$
 $$\Delta_{\%} = \left(\frac{\text{USDT} - \text{BCV}}{\text{BCV}}\right) \times 100$$
 
-### 3.3. Conversión de Precios a Bolívares
+### 3.2. Conversión de Precios a Bolívares (VES)
 $$\text{Costo}_{\text{BCV}} = \text{PrecioUSD}_{\text{BCV}} \times \text{Tasa}_{\text{BCV}}$$
-$$\text{Costo}_{\text{Promedio}} = \text{PrecioUSD}_{\text{Promedio}} \times \text{Tasa}_{\text{Promedio}}$$
+$$\text{Costo}_{\text{Paralelo}} = \text{PrecioUSD}_{\text{Paralelo}} \times \text{Tasa}_{\text{Paralelo}}$$
 
-### 3.4. Decisión de Conveniencia Económica
-- Si $\text{Costo}_{\text{BCV}} < \text{Costo}_{\text{Promedio}}$: **Conviene pagar en Bolívares (Tasa Oficial BCV)**.
-- Si $\text{Costo}_{\text{Promedio}} < \text{Costo}_{\text{BCV}}$: **Conviene pagar en Dólares en Efectivo (Tasa Promedio)**.
-- Si $|\text{Costo}_{\text{BCV}} - \text{Costo}_{\text{Promedio}}| < 0.01$: **Indistinto**.
+### 3.3. Decisión de Conveniencia Económica
+- Si $\text{Costo}_{\text{BCV}} < \text{Costo}_{\text{Paralelo}}$: **Conviene pagar en Bolívares (Tasa Oficial BCV)**.
+- Si $\text{Costo}_{\text{Paralelo}} < \text{Costo}_{\text{BCV}}$: **Conviene pagar en Dólares bajo la oferta en Tasa Paralelo**.
+- Si $|\text{Costo}_{\text{BCV}} - \text{Costo}_{\text{Paralelo}}| < 0.01$: **Indistinto**.
 
-### 3.5. Equivalencia en USDT (Binance P2P)
-$$\text{Costo}_{\text{USDT}} = \frac{\min(\text{Costo}_{\text{BCV}}, \text{Costo}_{\text{Promedio}})}{\text{Tasa}_{\text{USDT}}}$$
+### 3.4. Equivalencia en USDT (Binance P2P)
+$$\text{Costo}_{\text{USDT}} = \frac{\min(\text{Costo}_{\text{BCV}}, \text{Costo}_{\text{Paralelo}})}{\text{Tasa}_{\text{USDT}}}$$
 
 ## 4. Integración de API (api-dolar.leandrus.net)
 La aplicación consume datos del endpoint:

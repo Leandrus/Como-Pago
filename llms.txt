@@ -14,8 +14,8 @@
 - [Seguridad](https://como-pago.leandrus.net/.well-known/security.txt): Política de divulgación responsable RFC 9116.
 
 ## Fórmulas y Lógica Matemática
-- **Tasa Promedio para Físicos (Efectivo):** `((BCV + USDT) / 2) * 1.10`
-- **Diferencia de Tasas:** `Paralelo - BCV` y `((Paralelo - BCV) / BCV) * 100`
-- **Costo Oficial (VES):** `Precio_USD_BCV * Tasa_BCV`
-- **Costo Promedio (VES):** `Precio_USD_Promedio * Tasa_Promedio`
-- **Costo Equivalente en USDT:** `MIN(Costo_Oficial_VES, Costo_Promedio_VES) / Tasa_USDT`
+- **Diferencia y Brecha:** `Paralelo - BCV` y `((Paralelo - BCV) / BCV) * 100`
+- **Costo Oficial en Bolívares:** `Precio_USD_BCV * Tasa_BCV`
+- **Costo Paralelo en Bolívares:** `Precio_USD_Paralelo * Tasa_Paralelo`
+- **Ahorro Absoluto (VES):** `|Costo_Oficial - Costo_Paralelo|`
+- **Costo Equivalente en USDT:** `MIN(Costo_Oficial_VES, Costo_Paralelo_VES) / Tasa_USDT`

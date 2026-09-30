@@ -77,14 +77,55 @@
   <!-- Contenedor Principal de la App -->
   <div class="app-container">
     
-    <!-- Encabezado de la Plataforma -->
-    <header class="app-header">
+    <!-- Pantalla Principal Visible (100dvh) -->
+    <div class="app-content-wrapper">
+      <!-- Encabezado de la Plataforma -->
+      <header class="app-header">
       <div class="brand-badge" id="liveStatusBadge" title="Conexión en vivo con api-dolar.leandrus.net">
         <span class="status-dot"></span>
         <span id="liveStatusText">Tasas en Vivo</span>
       </div>
       <h1 class="app-title">¿Cómo Pago?</h1>
-      <p class="app-description">Calculadora de conveniencia económica para comparar precios en Bolívares (BCV), Dólares en Efectivo y Binance USDT.</p>
+      <p class="app-description">
+        En Venezuela, pagar en <strong>dólares en efectivo</strong> o transferir por <strong>Binance USDT</strong> tiene el mismo valor (tasa paralelo). Compara al instante si te conviene pagar en <strong>Bolívares (Tasa BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
+      </p>
+
+      <!-- Guía Desplegable: Casos de Uso y Funcionamiento -->
+      <details class="guide-card" id="guideAccordion">
+        <summary class="guide-toggle">
+          <span class="guide-toggle-label">
+            <svg class="guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            ¿Cómo funciona y casos de uso cotidianos?
+          </span>
+          <svg class="guide-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="guide-content">
+          <div class="guide-step">
+            <span class="guide-step-num">1</span>
+            <div class="guide-step-body">
+              <strong>Efectivo y USDT son lo mismo:</strong> En el mercado venezolano, 1 Dólar físico equivale a 1 USDT y ambos se cotizan a la tasa paralelo. No requieres cálculos distintos.
+            </div>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">2</span>
+            <div class="guide-step-body">
+              <strong>Evaluar descuentos comerciales:</strong> Si te dicen: <em>"$50 a tasa BCV o $45 si pagas en dólares"</em>, la app compara ambas opciones y te dice en cuál desembolsas menos dinero real.
+            </div>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">3</span>
+            <div class="guide-step-body">
+              <strong>Ahorro inmediato y directo:</strong> Sabrás con exactitud cuántos Bolívares y Dólares estás ahorrando antes de pagar.
+            </div>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">4</span>
+            <div class="guide-step-body">
+              <strong>Tasas en vivo y editables:</strong> Se sincronizan automáticamente con <em>api-dolar.leandrus.net</em> y puedes pulsar sobre cualquiera de ellas para adaptarla a la tasa de tu tienda.
+            </div>
+          </div>
+        </div>
+      </details>
     </header>
 
     <main>
@@ -98,7 +139,7 @@
           <!-- Tasa BCV Oficial (Verde) -->
           <article class="rate-card bcv">
             <div class="rate-header">
-              <span class="rate-label bcv">Tasa Oficial</span>
+              <span class="rate-label bcv">Tasa Oficial (BCV)</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
@@ -113,7 +154,7 @@
           <!-- Tasa USDT / Binance Paralelo (Ámbar) -->
           <article class="rate-card usdt">
             <div class="rate-header">
-              <span class="rate-label usdt">Tasa Binance</span>
+              <span class="rate-label usdt">Dólar (Efectivo/USDT)</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
@@ -136,27 +177,15 @@
           </div>
         </div>
 
-        <!-- Tasa Promedio de Compra de Dólares Físicos -->
-        <article class="card avg-rate-card">
-          <div class="avg-rate-header">
-            <label for="avgRateInput" class="avg-rate-title">Tasa Promedio de Compra (Dólares Físicos)</label>
-            <span class="avg-rate-formula-hint">((BCV+P2P)/2) * 1.10</span>
-          </div>
-          <div class="input-with-icon">
-            <span class="input-prefix">Bs.</span>
-            <input type="number" step="0.01" id="avgRateInput" class="input-control center" placeholder="0.00" aria-label="Tasa promedio para compra de dólares en efectivo">
-          </div>
-        </article>
-
         <hr class="separator">
 
-        <!-- Ofertas Comparativas (Conversión BCV vs Promedio) -->
+        <!-- Ofertas Comparativas (Conversión BCV vs Dólares) -->
         <div class="offers-section">
           <!-- Opción 1: Pago en Bolívares con Tasa Oficial BCV -->
           <div class="offer-group">
             <label for="price_bcv_usd_input" class="offer-label bcv">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              Precio cotizado a Tasa Oficial (Bolívares)
+              Opción 1: Precio a Tasa Oficial BCV (Pago en Bolívares)
             </label>
             <div class="offer-dual-inputs">
               <div class="input-with-icon">
@@ -170,19 +199,19 @@
             </div>
           </div>
 
-          <!-- Opción 2: Pago en Dólares Físicos con Tasa Promedio -->
+          <!-- Opción 2: Pago en Dólares (Efectivo o Binance USDT) -->
           <div class="offer-group">
-            <label for="price_avg_usd_input" class="offer-label avg">
+            <label for="price_parallel_usd_input" class="offer-label avg">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              Precio cotizado en Dólares Físicos (Tasa Promedio)
+              Opción 2: Precio en Dólares (Efectivo o Binance USDT)
             </label>
             <div class="offer-dual-inputs">
               <div class="input-with-icon">
                 <span class="input-prefix" style="color: #fcd34d;">$</span>
-                <input type="number" step="0.01" id="price_avg_usd_input" class="input-control input-usd-avg" placeholder="0.00" aria-label="Monto en dólares cotizado en efectivo">
+                <input type="number" step="0.01" id="price_parallel_usd_input" class="input-control input-usd-avg" placeholder="0.00" aria-label="Monto en dólares cotizado en efectivo o USDT">
               </div>
               <div class="input-with-icon">
-                <input type="text" id="price_avg_ves_input" class="input-control input-readonly" readonly placeholder="0.00" aria-label="Equivalente en bolívares calculado con tasa promedio">
+                <input type="text" id="price_parallel_ves_input" class="input-control input-readonly" readonly placeholder="0.00" aria-label="Equivalente en bolívares calculado con tasa paralelo">
                 <span class="input-suffix yellow">Bs.</span>
               </div>
             </div>
@@ -203,20 +232,17 @@
       <!-- ============================================== -->
       <section id="section2" class="space-y-4 hidden" aria-label="Resultados del análisis financiero">
         
-        <!-- Tarjeta de Recomendación de Pago -->
+        <!-- Tarjeta Unificada de Resultado y Recomendación -->
         <article class="card results-card" id="recommendationBox">
           <h2 class="results-title">Conviene pagar en:</h2>
           <div class="results-verdict" id="finalVerdict">...</div>
           <div class="results-details" id="savingsText"></div>
-        </article>
 
-        <!-- Tarjeta de Costo Equivalente en USDT -->
-        <article class="card usdt-transfer-card" id="usdtResultCard">
-          <h2 class="results-title" style="color: #fcd34d;">Costo Equivalente en USDT</h2>
-          <div class="usdt-amount-box" id="usdtTransferCost">$ 0.00</div>
-          <p class="usdt-explanation" id="usdtSubtitle">
-            Monto calculado en base al costo más bajo en Bolívares.
-          </p>
+          <!-- Nota de Equivalencia Simplificada Dólares / USDT -->
+          <div class="results-equivalence-pill" id="equivalenceBox">
+            <span class="equiv-icon">💡</span>
+            <span id="equivalenceText">...</span>
+          </div>
         </article>
 
         <!-- Botones de Acción (Editar / Reiniciar) -->
@@ -237,8 +263,9 @@
         </div>
       </section>
     </main>
+    </div>
 
-    <!-- Pie de Página & Andamiaje Legal -->
+    <!-- Pie de Página & Andamiaje Legal (por debajo de la visibilidad inicial) -->
     <footer class="app-footer">
       <nav class="footer-nav" aria-label="Enlaces legales y de privacidad">
         <a href="legal/terminos.html" class="footer-link" data-legal="terminos">Términos</a>

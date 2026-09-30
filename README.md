@@ -6,7 +6,7 @@
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0%20(Pure%20CSS%2FJS)-6366f1.svg)](css/main.css)
 [![API Status](https://img.shields.io/badge/API-api--dolar.leandrus.net-3b82f6.svg)](https://api-dolar.leandrus.net)
 
-Una herramienta web moderna, rápida y progresiva (PWA) de código abierto diseñada para comparar al instante las alternativas de pago cotidianas en Venezuela: **Tasa Oficial (BCV)**, **Dólares Físicos en Efectivo (Tasa Promedio)** y transferencias en **Binance USDT**.
+Una herramienta web moderna, rápida y progresiva (PWA) de código abierto diseñada para comparar al instante las dos grandes alternativas de pago cotidianas en Venezuela: **Tasa Oficial en Bolívares (BCV)** frente a **Dólares (Billetes en Efectivo / Binance USDT)**, entendiendo que en el mercado venezolano el dólar físico y el USDT se rigen por la misma tasa paralelo.
 
 🌐 **Sitio Web Oficial:** [https://como-pago.leandrus.net](https://como-pago.leandrus.net)  
 ⚡ **API de Tasas:** [https://api-dolar.leandrus.net](https://api-dolar.leandrus.net)
@@ -35,28 +35,30 @@ Una herramienta web moderna, rápida y progresiva (PWA) de código abierto dise�
 
 ## 📐 Lógica Financiera y Fórmulas Matemáticas
 
-1. **Tasa Promedio para Dólares Físicos (Efectivo):**
+1. **Diferencial y Brecha Cambiaria:**
    ```math
-   \text{Tasa Promedio} = \left(\frac{\text{BCV} + \text{USDT}}{2}\right) \times 1.10
-   ```
-   *(Representa el promedio simple entre la tasa oficial y la de mercado, con un 10% referencial por la prima de liquidez del efectivo. Puede ser editada libremente por el usuario).*
-
-2. **Diferencial de Tasas:**
-   ```math
-   \Delta_{\text{Bs}} = \text{USDT} - \text{BCV} \qquad \Delta_{\%} = \left(\frac{\text{USDT} - \text{BCV}}{\text{BCV}}\right) \times 100
+   \Delta_{\text{Bs}} = \text{Tasa}_{\text{Paralelo}} - \text{Tasa}_{\text{BCV}} \qquad \Delta_{\%} = \left(\frac{\text{Tasa}_{\text{Paralelo}} - \text{Tasa}_{\text{BCV}}}{\text{Tasa}_{\text{BCV}}}\right) \times 100
    ```
 
-3. **Costo en Bolívares:**
+2. **Costo Real en Bolívares (VES):**
    ```math
-   \text{Costo}_{\text{Oficial}} = \text{Precio USD} \times \text{Tasa}_{\text{BCV}}
+   \text{Costo}_{\text{Oficial}} = \text{Precio USD}_{\text{BCV}} \times \text{Tasa}_{\text{BCV}}
    ```
    ```math
-   \text{Costo}_{\text{Efectivo}} = \text{Precio USD} \times \text{Tasa}_{\text{Promedio}}
+   \text{Costo}_{\text{Paralelo}} = \text{Precio USD}_{\text{Paralelo}} \times \text{Tasa}_{\text{Paralelo}}
    ```
 
-4. **Equivalente USDT (Binance P2P):**
+3. **Determinación del Ahorro:**
    ```math
-   \text{Monto USDT} = \frac{\min(\text{Costo}_{\text{Oficial}}, \text{Costo}_{\text{Efectivo}})}{\text{Tasa}_{\text{USDT}}}
+   \text{Ahorro}_{\text{Bs}} = |\text{Costo}_{\text{Oficial}} - \text{Costo}_{\text{Paralelo}}|
+   ```
+   ```math
+   \text{Ahorro USD} = \frac{\text{Ahorro}_{\text{Bs}}}{\text{Tasa Ganadora}}
+   ```
+
+4. **Equivalente a Transferir en USDT (Binance P2P):**
+   ```math
+   \text{Monto USDT} = \frac{\min(\text{Costo}_{\text{Oficial}}, \text{Costo}_{\text{Paralelo}})}{\text{Tasa}_{\text{USDT}}}
    ```
 
 ---
