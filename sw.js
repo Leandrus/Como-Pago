@@ -1,32 +1,32 @@
 /**
  * Service Worker para Soporte Offline y PWA
  * ¿Cómo Pago en Venezuela?
- * Versión 1.0.2
+ * Versión 1.0.3
  */
 
-const CACHE_NAME = 'como-pago-v1.0.2';
+const CACHE_NAME = 'como-pago-v1.0.3';
 
 const STATIC_ASSETS = [
   './',
-  './index.html?v=1.0.2',
-  './css/main.css?v=1.0.2',
-  './css/consent.css?v=1.0.2',
-  './css/legal.css?v=1.0.2',
-  './js/app.js?v=1.0.2',
-  './js/api.js?v=1.0.2',
-  './js/calculator.js?v=1.0.2',
-  './js/consent.js?v=1.0.2',
-  './js/pwa.js?v=1.0.2',
+  './index.html?v=1.0.3',
+  './css/main.css?v=1.0.3',
+  './css/consent.css?v=1.0.3',
+  './css/legal.css?v=1.0.3',
+  './js/app.js?v=1.0.3',
+  './js/api.js?v=1.0.3',
+  './js/calculator.js?v=1.0.3',
+  './js/consent.js?v=1.0.3',
+  './js/pwa.js?v=1.0.3',
   './manifest.json',
   './site.webmanifest',
   './icons/favicon.png',
   './icons/favico.svg',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
-  './legal/terminos.html?v=1.0.2',
-  './legal/privacidad.html?v=1.0.2',
-  './legal/cookies.html?v=1.0.2',
-  './legal/aviso-legal.html?v=1.0.2'
+  './legal/terminos.html?v=1.0.3',
+  './legal/privacidad.html?v=1.0.3',
+  './legal/cookies.html?v=1.0.3',
+  './legal/aviso-legal.html?v=1.0.3'
 ];
 
 // Instalación: Precaché forzado y activación inmediata

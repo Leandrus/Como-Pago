@@ -37,52 +37,63 @@ export const Calculator = {
   },
 
   /**
-   * Analiza la conveniencia económica comparativa entre Tasa Oficial (BCV) y Dólares / Tasa Paralelo
-   * @param {number} bcvCostVes Costo total en Bolívares evaluado a tasa oficial BCV
-   * @param {number} parallelCostVes Costo total en Bolívares evaluado a tasa paralelo / Binance
-   * @param {number} usdtRate Tasa de cambio USDT/Paralelo
+   * Analiza la conveniencia económica comparativa entre Tasa Oficial (BCV) y Dólares / Tasa Paralelo (USDT)
+   * @param {number} bcvCostVes Costo en Bolívares evaluado a tasa oficial BCV
+   * @param {number} parallelCostVes Costo en Bolívares evaluado a tasa paralelo / Binance
+   * @param {number} usdtRate Tasa de cambio USDT / Paralelo (mercado libre)
    * @param {number} bcvRate Tasa oficial BCV
-   * @param {number} parallelRate Tasa paralelo utilizada
+   * @param {number} bcvUsd Monto cotizado en USD para la opción BCV
+   * @param {number} parallelUsd Monto cotizado en USD para la opción Divisas/USDT
    */
-  analyzePaymentMethod(bcvCostVes, parallelCostVes, usdtRate, bcvRate, parallelRate) {
+  analyzePaymentMethod(bcvCostVes, parallelCostVes, usdtRate, bcvRate, bcvUsd = 0, parallelUsd = 0) {
     if (!bcvCostVes || !parallelCostVes || bcvCostVes <= 0 || parallelCostVes <= 0 || !usdtRate || usdtRate <= 0) {
       return { isValid: false };
     }
 
-    const minVesCost = Math.min(bcvCostVes, parallelCostVes);
-    const usdtEquivalent = minVesCost / usdtRate;
+    // Costo real en dólares de ambas opciones evaluado al valor del mercado libre (tasa paralelo/USDT)
+    const realUsdCostBcv = bcvCostVes / usdtRate;
+    const realUsdCostParallel = parallelCostVes / usdtRate;
 
+    // Diferencia absoluta en Bolívares y en Dólares reales
     const diffVes = Math.abs(bcvCostVes - parallelCostVes);
+    const diffUsd = Math.abs(realUsdCostBcv - realUsdCostParallel);
+
+    // Porcentaje de diferencia tomando como base el mayor costo
     const maxVes = Math.max(bcvCostVes, parallelCostVes);
     const diffPercentage = maxVes > 0 ? (diffVes / maxVes) * 100 : 0;
 
-    // Determinación del ganador
-    const isBcvCheaper = bcvCostVes < parallelCostVes;
-    const isParallelCheaper = parallelCostVes < bcvCostVes;
-    const isIdentical = Math.abs(bcvCostVes - parallelCostVes) < 0.01;
+    // Menor costo y dólares necesarios para cubrir el pago
+    const minVesCost = Math.min(bcvCostVes, parallelCostVes);
+    const usdtEquivalent = minVesCost / usdtRate;
 
-    let usdEquivalentSavings = 0;
-    if (isBcvCheaper && bcvRate > 0) {
-      usdEquivalentSavings = diffVes / bcvRate;
-    } else if (isParallelCheaper && parallelRate > 0) {
-      usdEquivalentSavings = diffVes / parallelRate;
-    }
+    // Umbral de conveniencia indistinta:
+    // Se considera indistinto si la diferencia es menor al 1% O menor a $0.20 USD (menos de 20 centavos de dólar)
+    const isIndistinct = diffPercentage < 1.0 || diffUsd < 0.20;
 
     let winner = 'equal';
-    if (!isIdentical) {
-      winner = isBcvCheaper ? 'bcv' : 'parallel';
+    if (!isIndistinct) {
+      if (bcvCostVes < parallelCostVes) {
+        winner = 'bcv';
+      } else {
+        winner = 'parallel';
+      }
     }
 
     return {
       isValid: true,
-      winner,
-      minVesCost,
-      usdtEquivalent: Number(usdtEquivalent.toFixed(2)),
+      winner, // 'bcv' | 'parallel' | 'equal'
       diffVes: Number(diffVes.toFixed(2)),
+      diffUsd: Number(diffUsd.toFixed(2)),
       diffPercentage: Number(diffPercentage.toFixed(2)),
-      usdEquivalentSavings: Number(usdEquivalentSavings.toFixed(2)),
-      bcvCostVes,
-      parallelCostVes
+      usdEquivalentSavings: Number(diffUsd.toFixed(2)),
+      minVesCost: Number(minVesCost.toFixed(2)),
+      usdtEquivalent: Number(usdtEquivalent.toFixed(2)),
+      bcvCostVes: Number(bcvCostVes.toFixed(2)),
+      parallelCostVes: Number(parallelCostVes.toFixed(2)),
+      realUsdCostBcv: Number(realUsdCostBcv.toFixed(2)),
+      realUsdCostParallel: Number(realUsdCostParallel.toFixed(2)),
+      bcvUsd: Number(bcvUsd.toFixed(2)),
+      parallelUsd: Number(parallelUsd.toFixed(2))
     };
   },
 

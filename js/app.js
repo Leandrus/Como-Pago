@@ -182,36 +182,127 @@ function updateRateDiffDisplay() {
 }
 
 /**
- * Actualiza los campos calculados de costo en VES
+ * Actualiza los campos calculados de costo en VES o USD según corresponda
+ * @param {'from_usd' | 'from_ves' | 'from_rates'} source Origen del cambio
  */
-function updateCalculatedVesOutputs(skipSave = false) {
+function syncInputs(source = 'from_usd') {
   const bcvRate = parseFloat(els.bcvDisplay.value) || 0;
   const parallelRate = parseFloat(els.usdtDisplay.value) || 0;
 
-  const bcvUsd = parseFloat(els.price_bcv_usd_input.value) || 0;
-  const parallelUsd = parseFloat(els.price_parallel_usd_input.value) || 0;
+  if (source === 'from_usd' || source === 'from_rates') {
+    const bcvUsd = parseFloat(els.price_bcv_usd_input.value);
+    const parallelUsd = parseFloat(els.price_parallel_usd_input.value);
 
-  els.price_bcv_ves_input.value = bcvUsd > 0 && bcvRate > 0 ? Calculator.convertToVes(bcvUsd, bcvRate).toFixed(2) : '';
-  els.price_parallel_ves_input.value = parallelUsd > 0 && parallelRate > 0 ? Calculator.convertToVes(parallelUsd, parallelRate).toFixed(2) : '';
+    if (!isNaN(bcvUsd) && bcvUsd > 0 && bcvRate > 0) {
+      els.price_bcv_ves_input.value = (bcvUsd * bcvRate).toFixed(2);
+    } else if (source === 'from_usd' && (isNaN(bcvUsd) || bcvUsd <= 0)) {
+      els.price_bcv_ves_input.value = '';
+    }
 
-  if (!skipSave) {
-    saveState();
+    if (!isNaN(parallelUsd) && parallelUsd > 0 && parallelRate > 0) {
+      els.price_parallel_ves_input.value = (parallelUsd * parallelRate).toFixed(2);
+    } else if (source === 'from_usd' && (isNaN(parallelUsd) || parallelUsd <= 0)) {
+      els.price_parallel_ves_input.value = '';
+    }
   }
+
+  saveState();
+}
+
+/**
+ * Convierte Bolívares a USD cuando el usuario escribe en el campo de Bolívares
+ * @param {'bcv' | 'parallel'} target Opción a convertir
+ */
+function syncVesToUsd(target) {
+  const bcvRate = parseFloat(els.bcvDisplay.value) || 0;
+  const parallelRate = parseFloat(els.usdtDisplay.value) || 0;
+
+  if (target === 'bcv') {
+    const ves = parseFloat(els.price_bcv_ves_input.value);
+    if (!isNaN(ves) && ves > 0 && bcvRate > 0) {
+      els.price_bcv_usd_input.value = (ves / bcvRate).toFixed(2);
+    } else if (isNaN(ves) || ves <= 0) {
+      els.price_bcv_usd_input.value = '';
+    }
+  } else if (target === 'parallel') {
+    const ves = parseFloat(els.price_parallel_ves_input.value);
+    if (!isNaN(ves) && ves > 0 && parallelRate > 0) {
+      els.price_parallel_usd_input.value = (ves / parallelRate).toFixed(2);
+    } else if (isNaN(ves) || ves <= 0) {
+      els.price_parallel_usd_input.value = '';
+    }
+  }
+
+  saveState();
+}
+
+/**
+ * Función de compatibilidad para sincronización general
+ */
+function updateCalculatedVesOutputs(skipSave = false) {
+  syncInputs('from_rates');
 }
 
 /**
  * Analiza el método de pago más conveniente y muestra la pantalla de resultados
+ * Devuelve una de tres respuestas claras:
+ * 1. Conveniencia de pago en Bolívares (usando la tasa BCV)
+ * 2. Conveniencia de pago en Divisas o USDT
+ * 3. Conveniencia indistinta si la diferencia es muy mínima
  */
 function analyzePayment() {
-  const bcvCostVes = parseFloat(els.price_bcv_ves_input.value) || 0;
-  const parallelCostVes = parseFloat(els.price_parallel_ves_input.value) || 0;
-  const usdtRate = parseFloat(els.usdtDisplay.value) || 0;
   const bcvRate = parseFloat(els.bcvDisplay.value) || 0;
+  const parallelRate = parseFloat(els.usdtDisplay.value) || 0;
 
-  const analysis = Calculator.analyzePaymentMethod(bcvCostVes, parallelCostVes, usdtRate, bcvRate, usdtRate);
+  if (bcvRate <= 0 || parallelRate <= 0) {
+    alert('Las tasas de cambio no están disponibles o son inválidas. Por favor verifica las tasas.');
+    return;
+  }
+
+  let bcvUsd = parseFloat(els.price_bcv_usd_input.value) || 0;
+  let parallelUsd = parseFloat(els.price_parallel_usd_input.value) || 0;
+  let bcvVes = parseFloat(els.price_bcv_ves_input.value) || 0;
+  let parallelVes = parseFloat(els.price_parallel_ves_input.value) || 0;
+
+  // Si el usuario ingresó solo Bolívares, sincronizar USD primero
+  if (bcvUsd <= 0 && bcvVes > 0) {
+    bcvUsd = Number((bcvVes / bcvRate).toFixed(2));
+    els.price_bcv_usd_input.value = bcvUsd;
+  }
+  if (parallelUsd <= 0 && parallelVes > 0) {
+    parallelUsd = Number((parallelVes / parallelRate).toFixed(2));
+    els.price_parallel_usd_input.value = parallelUsd;
+  }
+
+  // Si el usuario solo colocó un precio (caso frecuente: comparar el mismo producto cotizado en USD)
+  // auto-completamos la otra opción para no frustrar la experiencia
+  if (bcvUsd > 0 && parallelUsd <= 0) {
+    parallelUsd = bcvUsd;
+    els.price_parallel_usd_input.value = parallelUsd.toFixed(2);
+    parallelVes = Number((parallelUsd * parallelRate).toFixed(2));
+    els.price_parallel_ves_input.value = parallelVes.toFixed(2);
+  } else if (parallelUsd > 0 && bcvUsd <= 0) {
+    bcvUsd = parallelUsd;
+    els.price_bcv_usd_input.value = bcvUsd.toFixed(2);
+    bcvVes = Number((bcvUsd * bcvRate).toFixed(2));
+    els.price_bcv_ves_input.value = bcvVes.toFixed(2);
+  }
+
+  // Recalcular montos en Bolívares exactos para el análisis
+  const bcvCostVes = bcvVes > 0 ? bcvVes : Calculator.convertToVes(bcvUsd, bcvRate);
+  const parallelCostVes = parallelVes > 0 ? parallelVes : Calculator.convertToVes(parallelUsd, parallelRate);
+
+  const analysis = Calculator.analyzePaymentMethod(
+    bcvCostVes,
+    parallelCostVes,
+    parallelRate,
+    bcvRate,
+    bcvUsd,
+    parallelUsd
+  );
 
   if (!analysis.isValid) {
-    alert('Por favor, ingresa los montos en Dólares ($) para ambas opciones y verifica que las tasas estén cargadas.');
+    alert('Por favor, ingresa al menos un monto en Dólares ($) o Bolívares (Bs) para realizar el cálculo.');
     return;
   }
 
@@ -229,10 +320,10 @@ function analyzePayment() {
   card.className = 'card results-card';
   verdict.className = 'results-verdict';
 
-  const bcvUsd = parseFloat(els.price_bcv_usd_input.value) || 0;
-  const parallelUsd = parseFloat(els.price_parallel_usd_input.value) || 0;
-
   if (analysis.winner === 'bcv') {
+    // -------------------------------------------------------------
+    // RESPUESTA 1: Conveniencia de pago en Bolívares (Tasa BCV)
+    // -------------------------------------------------------------
     card.classList.add('border-bcv');
     verdict.classList.add('bcv-won');
     verdict.textContent = 'Bolívares (Tasa Oficial BCV)';
@@ -241,64 +332,88 @@ function analyzePayment() {
       <span class="savings-lead">Te conviene pagar en Bolívares</span>
       <span class="savings-highlight bcv">Ahorras ${Calculator.formatVes(analysis.diffVes)}</span>
       <span class="savings-sub">
-        Equivale a <strong style="color: #34d399;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
+        Equivale a un ahorro real de <strong style="color: #34d399;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
         (<strong style="color: #34d399;">${analysis.diffPercentage.toFixed(2)}%</strong> menos).
       </span>
       <div class="results-comparison-grid">
         <div class="res-item">
           <span>En Bolívares (BCV):</span>
           <strong>${Calculator.formatVes(analysis.bcvCostVes)}</strong>
-          <small style="color: #64748b;">($ ${bcvUsd.toFixed(2)})</small>
+          <small style="color: #64748b;">(Costo real: $ ${analysis.realUsdCostBcv.toFixed(2)})</small>
         </div>
         <div class="res-item">
-          <span>En Dólares (Efectivo/USDT):</span>
+          <span>En Divisas / USDT:</span>
           <strong>${Calculator.formatVes(analysis.parallelCostVes)}</strong>
-          <small style="color: #64748b;">($ ${parallelUsd.toFixed(2)})</small>
+          <small style="color: #64748b;">(Costo real: $ ${analysis.parallelUsd.toFixed(2)})</small>
         </div>
       </div>
     `;
 
     eqText.innerHTML = `
-      <strong>¿Tienes Dólares o USDT?</strong> Te rinde más cambiarlos a Bolívares. Solo necesitas vender <strong>$ ${analysis.usdtEquivalent.toFixed(2)}</strong> para cubrir este pago.
+      <strong>¿Tienes Dólares en efectivo o Binance USDT?</strong> Te rinde más cambiarlos a Bolívares a tasa paralelo (${parallelRate.toFixed(2)} Bs/$). Solo necesitas vender <strong>$ ${analysis.usdtEquivalent.toFixed(2)} USD</strong> para pagar la cuenta, quedándote con <strong>$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> en tu bolsillo.
     `;
   } else if (analysis.winner === 'parallel') {
+    // -------------------------------------------------------------
+    // RESPUESTA 2: Conveniencia de pago en Divisas o USDT
+    // -------------------------------------------------------------
     card.classList.add('border-avg');
     verdict.classList.add('avg-won');
-    verdict.textContent = 'Dólares (Efectivo o USDT)';
+    verdict.textContent = 'Divisas o Binance USDT';
 
     savings.innerHTML = `
-      <span class="savings-lead">Te conviene pagar en Dólares</span>
-      <span class="savings-highlight avg">Ahorras ${Calculator.formatVes(analysis.diffVes)}</span>
+      <span class="savings-lead">Te conviene pagar en Divisas o USDT</span>
+      <span class="savings-highlight avg">Ahorras $ ${analysis.usdEquivalentSavings.toFixed(2)} USD</span>
       <span class="savings-sub">
-        Equivale a <strong style="color: #60a5fa;">$ ${analysis.usdEquivalentSavings.toFixed(2)} USD</strong> 
-        (<strong style="color: #60a5fa;">${analysis.diffPercentage.toFixed(2)}%</strong> menos).
+        Equivale a <strong style="color: #fbbf24;">${Calculator.formatVes(analysis.diffVes)}</strong> 
+        (<strong style="color: #fbbf24;">${analysis.diffPercentage.toFixed(2)}%</strong> menos).
       </span>
       <div class="results-comparison-grid">
         <div class="res-item">
-          <span>En Dólares (Efectivo/USDT):</span>
+          <span>En Divisas / USDT:</span>
           <strong>${Calculator.formatVes(analysis.parallelCostVes)}</strong>
-          <small style="color: #64748b;">($ ${parallelUsd.toFixed(2)})</small>
+          <small style="color: #64748b;">(Pagas: $ ${analysis.parallelUsd.toFixed(2)})</small>
         </div>
         <div class="res-item">
           <span>En Bolívares (BCV):</span>
           <strong>${Calculator.formatVes(analysis.bcvCostVes)}</strong>
-          <small style="color: #64748b;">($ ${bcvUsd.toFixed(2)})</small>
+          <small style="color: #64748b;">(Costo real: $ ${analysis.realUsdCostBcv.toFixed(2)})</small>
         </div>
       </div>
     `;
 
     eqText.innerHTML = `
-      <strong>Paga en Dólares:</strong> Da igual si entregas billetes físicos o transfieres por Binance USDT, pagas exactamente lo mismo: <strong>$ ${parallelUsd.toFixed(2)}</strong>.
+      <strong>Paga en Divisas o Binance USDT:</strong> El precio ofrecido incluye un descuento que supera la brecha cambiaria. Recuerda que en Venezuela 1 Dólar físico y 1 USDT tienen exactamente el mismo valor de mercado.
     `;
   } else {
+    // -------------------------------------------------------------
+    // RESPUESTA 3: Conveniencia indistinta si la diferencia es mínima
+    // -------------------------------------------------------------
     card.classList.add('border-default');
     verdict.classList.add('equal');
-    verdict.textContent = 'Indistinto (Mismo costo)';
+    verdict.textContent = 'Conveniencia Indistinta';
+
     savings.innerHTML = `
-      <span style="color: #f1f5f9;">Ambas opciones representan exactamente el mismo desembolso (${Calculator.formatVes(analysis.bcvCostVes)}).</span>
+      <span class="savings-lead">La diferencia es prácticamente nula</span>
+      <span class="savings-highlight" style="color: #94a3b8; font-size: 1.1rem;">Diferencia de apenas ${Calculator.formatVes(analysis.diffVes)} ($ ${analysis.usdEquivalentSavings.toFixed(2)} USD)</span>
+      <span class="savings-sub" style="color: #64748b;">
+        Variación de solo un ${analysis.diffPercentage.toFixed(2)}% entre ambas alternativas.
+      </span>
+      <div class="results-comparison-grid">
+        <div class="res-item">
+          <span>En Bolívares (BCV):</span>
+          <strong>${Calculator.formatVes(analysis.bcvCostVes)}</strong>
+          <small style="color: #64748b;">($ ${analysis.realUsdCostBcv.toFixed(2)})</small>
+        </div>
+        <div class="res-item">
+          <span>En Divisas / USDT:</span>
+          <strong>${Calculator.formatVes(analysis.parallelCostVes)}</strong>
+          <small style="color: #64748b;">($ ${analysis.parallelUsd.toFixed(2)})</small>
+        </div>
+      </div>
     `;
+
     eqText.innerHTML = `
-      El costo es idéntico tanto en Bolívares como en Dólares (Efectivo o Binance USDT).
+      <strong>Ambas opciones son equivalentes:</strong> El impacto en tu bolsillo es insignificante. Paga con el método que tengas más accesible (efectivo, Binance USDT o Bolívares por punto/pago móvil).
     `;
   }
 }
@@ -424,24 +539,35 @@ function closeLegalModal() {
 function bindEvents() {
   const handleRateChange = () => {
     updateRateDiffDisplay();
-    updateCalculatedVesOutputs();
+    syncInputs('from_rates');
     saveState();
   };
 
-  const handlePriceInput = () => {
-    updateCalculatedVesOutputs();
-  };
-
   // Escucha de entradas en tasas
-  ['input', 'keyup'].forEach(evt => {
+  ['input', 'keyup', 'change'].forEach(evt => {
     els.bcvDisplay.addEventListener(evt, handleRateChange);
     els.usdtDisplay.addEventListener(evt, handleRateChange);
-    els.price_bcv_usd_input.addEventListener(evt, handlePriceInput);
-    els.price_parallel_usd_input.addEventListener(evt, handlePriceInput);
   });
 
-  // Tecla Enter para calcular rápido en los inputs USD
-  [els.price_bcv_usd_input, els.price_parallel_usd_input].forEach(input => {
+  // Escucha de entradas en USD (calcula VES)
+  ['input', 'keyup'].forEach(evt => {
+    els.price_bcv_usd_input.addEventListener(evt, () => syncInputs('from_usd'));
+    els.price_parallel_usd_input.addEventListener(evt, () => syncInputs('from_usd'));
+  });
+
+  // Escucha de entradas en Bolívares (calcula USD)
+  ['input', 'keyup'].forEach(evt => {
+    els.price_bcv_ves_input.addEventListener(evt, () => syncVesToUsd('bcv'));
+    els.price_parallel_ves_input.addEventListener(evt, () => syncVesToUsd('parallel'));
+  });
+
+  // Tecla Enter en cualquiera de los 4 inputs numéricos para calcular de inmediato
+  [
+    els.price_bcv_usd_input,
+    els.price_bcv_ves_input,
+    els.price_parallel_usd_input,
+    els.price_parallel_ves_input
+  ].forEach(input => {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();

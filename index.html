@@ -46,8 +46,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Estilos Modulares (Vanilla CSS Puro Versionado para Cache-Busting) -->
-  <link rel="stylesheet" href="css/main.css?v=1.0.2">
-  <link rel="stylesheet" href="css/consent.css?v=1.0.2">
+  <link rel="stylesheet" href="css/main.css?v=1.0.3">
+  <link rel="stylesheet" href="css/consent.css?v=1.0.3">
 
   <!-- Marcado Estructurado JSON-LD (Schema.org) -->
   <script type="application/ld+json">
@@ -185,15 +185,15 @@
           <div class="offer-group">
             <label for="price_bcv_usd_input" class="offer-label bcv">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              Opción 1: Precio a Tasa Oficial BCV (Pago en Bolívares)
+              Opción 1: Cotizado a Tasa Oficial BCV (Pago en Bolívares)
             </label>
             <div class="offer-dual-inputs">
-              <div class="input-with-icon">
+              <div class="input-with-icon" title="Monto en Dólares ($)">
                 <span class="input-prefix" style="color: #34d399;">$</span>
-                <input type="number" step="0.01" id="price_bcv_usd_input" class="input-control input-usd-bcv" placeholder="0.00" aria-label="Monto en dólares cotizado a tasa oficial">
+                <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv" placeholder="0.00" aria-label="Monto en dólares a tasa oficial">
               </div>
-              <div class="input-with-icon">
-                <input type="text" id="price_bcv_ves_input" class="input-control input-readonly" readonly placeholder="0.00" aria-label="Equivalente en bolívares calculado con tasa oficial">
+              <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
+                <input type="number" step="any" id="price_bcv_ves_input" class="input-control" placeholder="0.00" aria-label="Monto en bolívares a tasa oficial">
                 <span class="input-suffix green">Bs.</span>
               </div>
             </div>
@@ -203,15 +203,15 @@
           <div class="offer-group">
             <label for="price_parallel_usd_input" class="offer-label avg">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              Opción 2: Precio en Dólares (Efectivo o Binance USDT)
+              Opción 2: Cotizado en Dólares (Efectivo o Binance USDT)
             </label>
             <div class="offer-dual-inputs">
-              <div class="input-with-icon">
+              <div class="input-with-icon" title="Monto en Dólares ($)">
                 <span class="input-prefix" style="color: #fcd34d;">$</span>
-                <input type="number" step="0.01" id="price_parallel_usd_input" class="input-control input-usd-avg" placeholder="0.00" aria-label="Monto en dólares cotizado en efectivo o USDT">
+                <input type="number" step="any" id="price_parallel_usd_input" class="input-control input-usd-avg" placeholder="0.00" aria-label="Monto en dólares en efectivo o USDT">
               </div>
-              <div class="input-with-icon">
-                <input type="text" id="price_parallel_ves_input" class="input-control input-readonly" readonly placeholder="0.00" aria-label="Equivalente en bolívares calculado con tasa paralelo">
+              <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
+                <input type="number" step="any" id="price_parallel_ves_input" class="input-control" placeholder="0.00" aria-label="Monto en bolívares a tasa paralelo/USDT">
                 <span class="input-suffix yellow">Bs.</span>
               </div>
             </div>
@@ -392,6 +392,6 @@
   </div>
 
   <!-- Script Modular Principal Versionado -->
-  <script type="module" src="js/app.js?v=1.0.2"></script>
+  <script type="module" src="js/app.js?v=1.0.3"></script>
 </body>
 </html>
