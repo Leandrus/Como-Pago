@@ -1,0 +1,21 @@
+# ¿Cómo Pago en Venezuela?
+> Calculadora web de conveniencia económica y comparador de tasas de cambio (Oficial BCV vs Dólares en Efectivo vs USDT) para consumidores y comercios en Venezuela.
+
+## Descripción General
+¿Cómo Pago en Venezuela? es una aplicación web progresiva (PWA) de código abierto diseñada para comparar al instante las alternativas de pago cotidianas en Venezuela. El sistema evalúa cotizaciones en tiempo real provenientes de `api-dolar.leandrus.net`, calcula el costo total en Bolívares (VES), determina el método más económico y calcula el monto exacto equivalente en USDT para transferencias mediante Binance P2P.
+
+## Enlaces Principales
+- [Calculadora Principal](https://como-pago.leandrus.net/): Aplicación web interactiva.
+- [Documentación Completa para LLMs](https://como-pago.leandrus.net/llms-full.txt): Contexto detallado, fórmulas matemáticas y arquitectura del proyecto.
+- [API de Tasas Dólar Venezuela](https://api-dolar.leandrus.net): Proveedor de cotizaciones oficiales BCV y paralelo.
+- [Términos y Condiciones](https://como-pago.leandrus.net/legal/terminos.html): Marco legal y alcance del servicio.
+- [Política de Privacidad](https://como-pago.leandrus.net/legal/privacidad.html): Cero recolección de datos personales y almacenamiento local.
+- [Aviso Legal](https://como-pago.leandrus.net/legal/aviso-legal.html): Descargo de responsabilidad financiera.
+- [Seguridad](https://como-pago.leandrus.net/.well-known/security.txt): Política de divulgación responsable RFC 9116.
+
+## Fórmulas y Lógica Matemática
+- **Tasa Promedio para Físicos (Efectivo):** `((BCV + USDT) / 2) * 1.10`
+- **Diferencia de Tasas:** `Paralelo - BCV` y `((Paralelo - BCV) / BCV) * 100`
+- **Costo Oficial (VES):** `Precio_USD_BCV * Tasa_BCV`
+- **Costo Promedio (VES):** `Precio_USD_Promedio * Tasa_Promedio`
+- **Costo Equivalente en USDT:** `MIN(Costo_Oficial_VES, Costo_Promedio_VES) / Tasa_USDT`

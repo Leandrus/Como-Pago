@@ -1,0 +1,11 @@
+# Security Policy RFC 9116
+# Project: ¿Cómo Pago en Venezuela?
+# Canonical: https://como-pago.leandrus.net/.well-known/security.txt
+
+Contact: mailto:contacto@leandrus.net
+Contact: https://github.com/Leandrus/Como-Pago/security
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: es, en
+Canonical: https://como-pago.leandrus.net/.well-known/security.txt
+Policy: https://github.com/Leandrus/Como-Pago/blob/main/SECURITY.md
+Acknowledgments: https://github.com/Leandrus/Como-Pago/graphs/contributors

@@ -1,0 +1,25 @@
+# Sistemas Operativos
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores & IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# Entornos y temporales
+.env
+.env.local
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Antigravity & AI Brain
+.gemini/
+.agents/
+scratch/

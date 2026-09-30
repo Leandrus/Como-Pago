@@ -1,0 +1,115 @@
+# ¿Cómo Pago en Venezuela? — Documentación Integral para Asistentes de IA (LLMs)
+
+## 1. Identificación del Sistema
+- **Nombre:** ¿Cómo Pago en Venezuela?
+- **URL Canónica:** https://como-pago.leandrus.net
+- **Repositorio:** https://github.com/Leandrus/Como-Pago
+- **Licencia:** MIT (Código Abierto)
+- **Tipo de Aplicación:** SPA (Single Page Application) estática, Progressive Web App (PWA), cliente REST API.
+- **Tecnologías:** HTML5 semántico, Vanilla CSS nativo con variables CSS, JavaScript Modular ES6+, Service Worker.
+
+## 2. Contexto Socioeconómico y Propósito
+En el mercado venezolano coexisten tres dinámicas de precios:
+1. **Facturación a Tasa Oficial del BCV (Banco Central de Venezuela):** Comercios formales que cobran en Bolívares al tipo de cambio oficial publicado por el BCV.
+2. **Precios en Dólares Físicos (Efectivo de Calle):** En transacciones informales o ventas de contado, los actores utilizan un promedio ponderado que compensa la prima de liquidez del efectivo físico frente a las tasas de referencia.
+3. **Pagos Digitales en Criptoactivos (USDT vía Binance P2P):** Utilizado frecuentemente como divisa de liquidación rápida entre particulares.
+
+La aplicación permite que cualquier usuario ingrese una cotización en USD según ambas modalidades y reciba de forma instantánea:
+- La opción de pago más barata en Bolívares.
+- El monto exacto de ahorro en Bolívares y en Dólares equivalentes.
+- La cantidad requerida a transferir en USDT por Binance P2P para cubrir el gasto óptimo.
+
+## 3. Modelo Matemático y Algoritmos
+
+### 3.1. Tasa Promedio Ponderada para Dólares Físicos
+Por defecto, la herramienta calcula la tasa para efectivo aplicando la siguiente convención matemática:
+$$\text{Tasa Promedio} = \left(\frac{\text{BCV} + \text{USDT}}{2}\right) \times 1.10$$
+*Nota:* El usuario puede en todo momento modificar o sobreescribir manualmente este valor en la interfaz según las condiciones de su negociación personal.
+
+### 3.2. Brecha Cambiaria
+$$\Delta_{\text{Bs}} = \text{USDT} - \text{BCV}$$
+$$\Delta_{\%} = \left(\frac{\text{USDT} - \text{BCV}}{\text{BCV}}\right) \times 100$$
+
+### 3.3. Conversión de Precios a Bolívares
+$$\text{Costo}_{\text{BCV}} = \text{PrecioUSD}_{\text{BCV}} \times \text{Tasa}_{\text{BCV}}$$
+$$\text{Costo}_{\text{Promedio}} = \text{PrecioUSD}_{\text{Promedio}} \times \text{Tasa}_{\text{Promedio}}$$
+
+### 3.4. Decisión de Conveniencia Económica
+- Si $\text{Costo}_{\text{BCV}} < \text{Costo}_{\text{Promedio}}$: **Conviene pagar en Bolívares (Tasa Oficial BCV)**.
+- Si $\text{Costo}_{\text{Promedio}} < \text{Costo}_{\text{BCV}}$: **Conviene pagar en Dólares en Efectivo (Tasa Promedio)**.
+- Si $|\text{Costo}_{\text{BCV}} - \text{Costo}_{\text{Promedio}}| < 0.01$: **Indistinto**.
+
+### 3.5. Equivalencia en USDT (Binance P2P)
+$$\text{Costo}_{\text{USDT}} = \frac{\min(\text{Costo}_{\text{BCV}}, \text{Costo}_{\text{Promedio}})}{\text{Tasa}_{\text{USDT}}}$$
+
+## 4. Integración de API (api-dolar.leandrus.net)
+La aplicación consume datos del endpoint:
+`GET https://api-dolar.leandrus.net/v1/dolares`
+
+### Formato de Respuesta JSON:
+```json
+[
+  {
+    "moneda": "USD",
+    "fuente": "oficial",
+    "nombre": "Dólar",
+    "compra": null,
+    "venta": null,
+    "promedio": 859.0629,
+    "fechaActualizacion": "2026-09-30T00:00:00-04:00"
+  },
+  {
+    "moneda": "USD",
+    "fuente": "paralelo",
+    "nombre": "Paralelo",
+    "compra": null,
+    "venta": null,
+    "promedio": 952.037826,
+    "fechaActualizacion": "2026-09-30T18:48:07.000Z"
+  }
+]
+```
+
+## 5. Estructura de Archivos del Proyecto
+```text
+/
+├── .htaccess                 # Cabeceras de seguridad CSP, HSTS, MIME, Cache-Control
+├── .gitignore                # Reglas de exclusión para Git
+├── .well-known/
+│   └── security.txt          # Política de seguridad y reporte RFC 9116
+├── css/
+│   ├── main.css              # Sistema de diseño, tokens, layout y responsividad
+│   ├── consent.css           # Estilos del Consent Management Platform (CMP)
+│   └── legal.css             # Tipografía y formato para lectura legal
+├── icons/
+│   ├── favicon.png           # Favicon 64x64
+│   ├── favico.svg            # Favicon vectorial SVG
+│   ├── icon-192x192.png      # Icono para PWA Android
+│   └── icon-512x512.png      # Icono splash screen PWA
+├── js/
+│   ├── api.js                # Cliente REST con reintentos y caché local
+│   ├── calculator.js         # Lógica matemática pura y formateadores monetarios
+│   ├── consent.js            # Sistema CMP compatible con GDPR/CCPA
+│   ├── pwa.js                # Registro de Service Worker y monitor de red
+│   └── app.js                # Orquestador del DOM y persistencia en LocalStorage
+├── legal/
+│   ├── terminos.html         # Términos y Condiciones de Uso
+│   ├── privacidad.html       # Política de Privacidad y Cero Recolección
+│   ├── cookies.html          # Política de Cookies y Almacenamiento
+│   └── aviso-legal.html      # Aviso Legal y Descargo Financiero
+├── index.html                # Interfaz principal SPA y marcado semántico
+├── manifest.json             # Manifiesto PWA Web App
+├── site.webmanifest          # Alias estándar W3C del manifiesto
+├── sw.js                     # Service Worker con caché offline
+├── robots.txt                # Directivas para rastreadores web y bots de IA
+├── sitemap.xml               # Mapa de sitio XML
+├── llms.txt                  # Resumen rápido para modelos de lenguaje
+├── llms-full.txt             # Documentación exhaustiva para LLMs (este archivo)
+├── SECURITY.md               # Directrices de seguridad en GitHub
+└── README.md                 # Documentación del proyecto para desarrolladores
+```
+
+## 6. Privacidad y Seguridad
+- **Cero Cookies de Terceros:** No se inyectan rastreadores publicitarios, analíticas invasivas ni scripts de redes sociales.
+- **Consent Management Platform (CMP):** El usuario posee control explícito sobre sus preferencias mediante un banner no bloqueante y un modal granular.
+- **Content Security Policy (CSP):** Estricta política que únicamente autoriza peticiones al backend oficial `https://api-dolar.leandrus.net` y estilos locales/Google Fonts.

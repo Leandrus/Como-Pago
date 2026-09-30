@@ -1,0 +1,24 @@
+# robots.txt para ¿Cómo Pago en Venezuela?
+# Host: https://como-pago.leandrus.net
+
+User-agent: *
+Allow: /
+
+# Asistentes de IA y LLMs permitidos
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap
+Sitemap: https://como-pago.leandrus.net/sitemap.xml
