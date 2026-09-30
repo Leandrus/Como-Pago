@@ -46,18 +46,36 @@
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
 
-    # HTML y Manifiesto (Caché breve para actualizaciones rápidas)
+    # HTML y Service Worker (Cero caché para que las actualizaciones se reflejen al instante)
     ExpiresByType text/html "access plus 0 seconds"
     ExpiresByType application/manifest+json "access plus 1 week"
 
-    # Estilos y Scripts
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
+    # Estilos y Scripts (Caché breve con revalidación)
+    ExpiresByType text/css "access plus 1 hour"
+    ExpiresByType application/javascript "access plus 1 hour"
+    ExpiresByType text/javascript "access plus 1 hour"
 
     # Fuentes e Imágenes
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Cabeceras de control de caché para forzar actualización en móviles
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    <FilesMatch "sw\.js$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
 </IfModule>
 
 # 5. Prohibir acceso a archivos ocultos (excepto .well-known)
