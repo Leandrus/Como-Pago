@@ -66,22 +66,14 @@ export const Calculator = {
     const minVesCost = Math.min(bcvCostVes, parallelCostVes);
     const usdtEquivalent = minVesCost / usdtRate;
 
-    // Umbral de conveniencia indistinta:
-    // Se considera indistinto si la diferencia es menor al 1% O menor a $0.20 USD (menos de 20 centavos de dólar)
-    const isIndistinct = diffPercentage < 1.0 || diffUsd < 0.20;
-
-    let winner = 'equal';
-    if (!isIndistinct) {
-      if (bcvCostVes < parallelCostVes) {
-        winner = 'bcv';
-      } else {
-        winner = 'parallel';
-      }
-    }
+    // Regla de decisión binaria:
+    // Solo conviene pagar en Divisas/USDT si su costo real es estrictamente menor al de Bolívares.
+    // En caso de empate, diferencia mínima o menor costo en Bolívares, el usuario siempre preferirá pagar en Bolívares (BCV).
+    const winner = (parallelCostVes < bcvCostVes) ? 'parallel' : 'bcv';
 
     return {
       isValid: true,
-      winner, // 'bcv' | 'parallel' | 'equal'
+      winner, // 'bcv' | 'parallel'
       diffVes: Number(diffVes.toFixed(2)),
       diffUsd: Number(diffUsd.toFixed(2)),
       diffPercentage: Number(diffPercentage.toFixed(2)),
