@@ -4,10 +4,17 @@
  * Integración de API, Cálculos, Persistencia y UI
  */
 
-import { getDollarRates, formatRateDate } from './api.js?v=1.0.5';
-import { Calculator } from './calculator.js?v=1.0.5';
-import { initPWA } from './pwa.js?v=1.0.5';
-import './consent.js?v=1.0.5';
+import { getDollarRates, formatRateDate } from './api.js?v=1.0.6';
+import { Calculator } from './calculator.js?v=1.0.6';
+import { initPWA } from './pwa.js?v=1.0.6';
+import './consent.js?v=1.0.6';
+import {
+  loadRatesHistory,
+  updateLiveRatePoint,
+  filterRatesByPeriod,
+  calculateMetrics,
+  renderHistoryChart
+} from './history.js?v=1.0.6';
 
 const LS_KEY = 've_payment_calculator_state';
 const DEBOUNCE_TIME = 600;
@@ -19,7 +26,9 @@ const state = {
   price_bcv_usd: 0,
   price_parallel_usd: 0,
   saveTimeout: null,
-  lastUpdatedIso: null
+  lastUpdatedIso: null,
+  currentHistoryPeriod: '1M',
+  historyLoadedData: null
 };
 
 // Referencias del DOM
@@ -51,6 +60,18 @@ function initDomReferences() {
     btnCalculate: document.getElementById('btnCalculate'),
     btnEdit: document.getElementById('btnEdit'), 
     btnReset: document.getElementById('btnReset'),
+
+    // Historial y gráfico
+    btnOpenHistory: document.getElementById('btnOpenHistory'),
+    historyModal: document.getElementById('historyModal'),
+    historyModalClose: document.getElementById('historyModalClose'),
+    historyModalCloseBtn: document.getElementById('historyModalCloseBtn'),
+    chartContainer: document.getElementById('chartContainer'),
+    historyBcvChange: document.getElementById('historyBcvChange'),
+    historyUsdtChange: document.getElementById('historyUsdtChange'),
+    historyAvgSpread: document.getElementById('historyAvgSpread'),
+    recentRecordsBody: document.getElementById('recentRecordsBody'),
+    periodTabs: document.querySelectorAll('.period-tab'),
 
     // Modales legales integrados
     legalModal: document.getElementById('legalModal'),
@@ -145,6 +166,10 @@ async function fetchRates() {
     if (data.usdt > 0) {
       state.usdt = data.usdt;
       els.usdtDisplay.value = state.usdt.toFixed(2);
+    }
+
+    if (data.bcv > 0 && data.usdt > 0) {
+      updateLiveRatePoint(data.bcv, data.usdt, data.updatedAt);
     }
 
     if (data.updatedAt) {
@@ -570,6 +595,30 @@ function bindEvents() {
   els.btnEdit.addEventListener('click', showInputsView);
   els.btnReset.addEventListener('click', handleResetAll);
 
+  // Botón para abrir el modal de historial y gráfico
+  if (els.btnOpenHistory) {
+    els.btnOpenHistory.addEventListener('click', openHistoryModal);
+  }
+
+  // Cierre de modal de historial
+  if (els.historyModalClose) els.historyModalClose.addEventListener('click', closeHistoryModal);
+  if (els.historyModalCloseBtn) els.historyModalCloseBtn.addEventListener('click', closeHistoryModal);
+  if (els.historyModal) {
+    els.historyModal.addEventListener('click', (e) => {
+      if (e.target === els.historyModal) closeHistoryModal();
+    });
+  }
+
+  // Selector de períodos del gráfico (1S, 1M, 3M, 1A)
+  if (els.periodTabs) {
+    els.periodTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const period = tab.getAttribute('data-period');
+        if (period) updateHistoryView(period);
+      });
+    });
+  }
+
   // Enlaces legales que abren el modal en SPA
   document.querySelectorAll('[data-legal]').forEach(link => {
     link.addEventListener('click', (e) => {
@@ -592,9 +641,124 @@ function bindEvents() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeLegalModal();
+      closeHistoryModal();
       if (window.ConsentManager) window.ConsentManager.hideModal();
     }
   });
+}
+
+/**
+ * Abre el modal de historial y renderiza los datos
+ */
+async function openHistoryModal() {
+  if (!els.historyModal) return;
+  els.historyModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  if (!state.historyLoadedData) {
+    if (els.chartContainer) {
+      els.chartContainer.innerHTML = `
+        <div class="chart-loader">
+          <div class="rate-loader active" style="display:inline-block; border-color: var(--color-primary); border-top-color: transparent;"></div>
+          <span>Cargando cotizaciones históricas...</span>
+        </div>
+      `;
+    }
+    const historyPayload = await loadRatesHistory();
+    state.historyLoadedData = historyPayload.rates || [];
+  }
+
+  updateHistoryView(state.currentHistoryPeriod);
+}
+
+/**
+ * Cierra el modal de historial
+ */
+function closeHistoryModal() {
+  if (!els.historyModal) return;
+  els.historyModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/**
+ * Actualiza métricas, gráfico y tabla según el período seleccionado
+ */
+function updateHistoryView(period) {
+  state.currentHistoryPeriod = period;
+
+  // Actualizar estado visual de las pestañas
+  if (els.periodTabs) {
+    els.periodTabs.forEach(tab => {
+      const isCurrent = tab.getAttribute('data-period') === period;
+      tab.classList.toggle('active', isCurrent);
+      tab.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+    });
+  }
+
+  const rates = state.historyLoadedData || [];
+  const filtered = filterRatesByPeriod(rates, period);
+  const metrics = calculateMetrics(filtered);
+
+  // Actualizar métricas
+  if (els.historyBcvChange) {
+    const sign = metrics.bcvChange > 0 ? '+' : '';
+    const cssClass = metrics.bcvChange > 0 ? 'negative' : (metrics.bcvChange < 0 ? 'positive' : '');
+    els.historyBcvChange.innerHTML = `<span class="${cssClass}">${sign}${metrics.bcvChange.toFixed(2)}%</span>`;
+  }
+
+  if (els.historyUsdtChange) {
+    const sign = metrics.usdtChange > 0 ? '+' : '';
+    const cssClass = metrics.usdtChange > 0 ? 'negative' : (metrics.usdtChange < 0 ? 'positive' : '');
+    els.historyUsdtChange.innerHTML = `<span class="${cssClass}">${sign}${metrics.usdtChange.toFixed(2)}%</span>`;
+  }
+
+  if (els.historyAvgSpread) {
+    els.historyAvgSpread.textContent = `+${metrics.avgSpread.toFixed(2)}%`;
+  }
+
+  // Renderizar gráfico interactivo SVG
+  if (els.chartContainer) {
+    renderHistoryChart(els.chartContainer, filtered, period);
+  }
+
+  // Renderizar tabla de registros recientes
+  if (els.recentRecordsBody) {
+    populateRecentRecordsTable(filtered);
+  }
+}
+
+/**
+ * Llena la tabla de registros recientes
+ */
+function populateRecentRecordsTable(records) {
+  if (!els.recentRecordsBody) return;
+  if (!records || records.length === 0) {
+    els.recentRecordsBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 1rem;">Sin registros disponibles</td></tr>';
+    return;
+  }
+
+  // Invertir para mostrar los más recientes arriba (máximo 30 filas)
+  const reversed = [...records].reverse().slice(0, 30);
+  let html = '';
+
+  reversed.forEach(r => {
+    let spreadText = '--';
+    if (r.bcv > 0 && r.usdt > 0) {
+      const spread = (((r.usdt - r.bcv) / r.bcv) * 100).toFixed(2);
+      spreadText = `+${spread}%`;
+    }
+
+    html += `
+      <tr>
+        <td style="font-weight: 500;">${r.date}</td>
+        <td style="text-align: right; color: var(--color-bcv); font-weight: 600;">${r.bcv ? 'Bs. ' + r.bcv.toFixed(2) : '--'}</td>
+        <td style="text-align: right; color: var(--color-usdt); font-weight: 600;">${r.usdt ? 'Bs. ' + r.usdt.toFixed(2) : '--'}</td>
+        <td style="text-align: right; color: #38bdf8;">${spreadText}</td>
+      </tr>
+    `;
+  });
+
+  els.recentRecordsBody.innerHTML = html;
 }
 
 /**

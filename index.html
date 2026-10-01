@@ -46,8 +46,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Estilos Modulares (Vanilla CSS Puro Versionado para Cache-Busting) -->
-  <link rel="stylesheet" href="css/main.css?v=1.0.5">
-  <link rel="stylesheet" href="css/consent.css?v=1.0.5">
+  <link rel="stylesheet" href="css/main.css?v=1.0.6">
+  <link rel="stylesheet" href="css/consent.css?v=1.0.6">
 
   <!-- Marcado Estructurado JSON-LD (Schema.org) -->
   <script type="application/ld+json">
@@ -175,6 +175,17 @@
           <div class="api-timestamp" id="apiTimestamp">
             Conectando a api-dolar.leandrus.net...
           </div>
+        </div>
+
+        <!-- Botón Desplegable para Historial y Fluctuación -->
+        <div class="history-trigger-container">
+          <button type="button" id="btnOpenHistory" class="btn-history-trigger" aria-label="Ver historial de tasas y gráfico de fluctuación">
+            <svg class="history-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <span>Ver Historial y Fluctuación</span>
+            <span class="history-badge">1S • 1M • 3M • 1A</span>
+          </button>
         </div>
 
         <hr class="separator">
@@ -311,6 +322,99 @@
   </div>
 
   <!-- ============================================== -->
+  <!-- MODAL DE HISTORIAL DE TASAS Y GRÁFICO (SPA) -->
+  <!-- ============================================== -->
+  <div id="historyModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="historyModalTitle">
+    <div class="modal-dialog history-modal-dialog">
+      <div class="modal-header">
+        <div class="history-modal-header-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <h2 id="historyModalTitle" class="modal-title">Historial y Fluctuación</h2>
+        </div>
+        <button id="historyModalClose" class="modal-close-btn" aria-label="Cerrar modal de historial">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body history-modal-body">
+        <!-- Selector de Períodos -->
+        <div class="period-selector-wrap">
+          <div class="period-selector" role="tablist" aria-label="Seleccionar período de tiempo">
+            <button type="button" class="period-tab" data-period="1S" role="tab" aria-selected="false">1 Sem</button>
+            <button type="button" class="period-tab active" data-period="1M" role="tab" aria-selected="true">1 Mes</button>
+            <button type="button" class="period-tab" data-period="3M" role="tab" aria-selected="false">3 Meses</button>
+            <button type="button" class="period-tab" data-period="1A" role="tab" aria-selected="false">1 Año</button>
+          </div>
+        </div>
+
+        <!-- Métricas Resumen -->
+        <div class="history-metrics-grid">
+          <div class="metric-card bcv">
+            <span class="metric-label">Oficial (BCV)</span>
+            <span class="metric-value" id="historyBcvChange">--</span>
+          </div>
+          <div class="metric-card usdt">
+            <span class="metric-label">Paralelo / USDT</span>
+            <span class="metric-value" id="historyUsdtChange">--</span>
+          </div>
+          <div class="metric-card spread">
+            <span class="metric-label">Brecha Promedio</span>
+            <span class="metric-value" id="historyAvgSpread">--</span>
+          </div>
+        </div>
+
+        <!-- Contenedor del Gráfico SVG Interactivo -->
+        <div id="chartContainer" class="chart-container">
+          <div class="chart-loader">
+            <span class="spinner"></span>
+            <span>Cargando cotizaciones históricas...</span>
+          </div>
+        </div>
+
+        <!-- Leyenda del Gráfico -->
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-line bcv"></span>
+            <span>Tasa Oficial BCV</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-line usdt"></span>
+            <span>Dólar Efectivo / USDT</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-area"></span>
+            <span>Brecha Cambiaria</span>
+          </div>
+        </div>
+
+        <!-- Tabla / Lista de Registros Recientes -->
+        <div class="recent-records-section">
+          <h3 class="recent-records-title">Cotizaciones del período</h3>
+          <div class="recent-records-table-wrap">
+            <table class="recent-records-table" id="recentRecordsTable">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th style="text-align: right;">BCV</th>
+                  <th style="text-align: right;">Paralelo</th>
+                  <th style="text-align: right;">Brecha</th>
+                </tr>
+              </thead>
+              <tbody id="recentRecordsBody">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="historyModalCloseBtn" type="button" class="btn btn-secondary" style="width: auto; padding: 0.6rem 1.4rem;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
   <!-- BANNER DE GESTIÓN DE CONSENTIMIENTO (CMP) -->
   <!-- ============================================== -->
   <div id="cmp-banner" class="cmp-banner" role="region" aria-label="Consentimiento de privacidad y cookies">
@@ -392,6 +496,6 @@
   </div>
 
   <!-- Script Modular Principal Versionado -->
-  <script type="module" src="js/app.js?v=1.0.5"></script>
+  <script type="module" src="js/app.js?v=1.0.6"></script>
 </body>
 </html>
