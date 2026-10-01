@@ -4,17 +4,17 @@
  * Integración de API, Cálculos, Persistencia y UI
  */
 
-import { getDollarRates, formatRateDate } from './api.js?v=1.0.6';
-import { Calculator } from './calculator.js?v=1.0.6';
-import { initPWA } from './pwa.js?v=1.0.6';
-import './consent.js?v=1.0.6';
+import { getDollarRates, formatRateDate } from './api.js?v=1.1.0';
+import { Calculator } from './calculator.js?v=1.1.0';
+import { initPWA } from './pwa.js?v=1.1.0';
+import './consent.js?v=1.1.0';
 import {
   loadRatesHistory,
   updateLiveRatePoint,
   filterRatesByPeriod,
   calculateMetrics,
   renderHistoryChart
-} from './history.js?v=1.0.6';
+} from './history.js?v=1.1.0';
 
 const LS_KEY = 've_payment_calculator_state';
 const DEBOUNCE_TIME = 600;

@@ -1,23 +1,23 @@
 /**
  * Service Worker para Soporte Offline y PWA
  * ¿Cómo Pago en Venezuela?
- * Versión 1.0.6
+ * Versión 1.1.0
  */
 
-const CACHE_NAME = 'como-pago-v1.0.6';
+const CACHE_NAME = 'como-pago-v1.1.0';
 
 const STATIC_ASSETS = [
   './',
-  './index.html?v=1.0.6',
-  './css/main.css?v=1.0.6',
-  './css/consent.css?v=1.0.6',
-  './css/legal.css?v=1.0.6',
-  './js/app.js?v=1.0.6',
-  './js/api.js?v=1.0.6',
-  './js/calculator.js?v=1.0.6',
-  './js/consent.js?v=1.0.6',
-  './js/history.js?v=1.0.6',
-  './js/pwa.js?v=1.0.6',
+  './index.html?v=1.1.0',
+  './css/main.css?v=1.1.0',
+  './css/consent.css?v=1.1.0',
+  './css/legal.css?v=1.1.0',
+  './js/app.js?v=1.1.0',
+  './js/api.js?v=1.1.0',
+  './js/calculator.js?v=1.1.0',
+  './js/consent.js?v=1.1.0',
+  './js/history.js?v=1.1.0',
+  './js/pwa.js?v=1.1.0',
   './data/rates-history.json',
   './manifest.json',
   './site.webmanifest',
@@ -25,10 +25,10 @@ const STATIC_ASSETS = [
   './icons/favico.svg',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
-  './legal/terminos.html?v=1.0.6',
-  './legal/privacidad.html?v=1.0.6',
-  './legal/cookies.html?v=1.0.6',
-  './legal/aviso-legal.html?v=1.0.6'
+  './legal/terminos.html?v=1.1.0',
+  './legal/privacidad.html?v=1.1.0',
+  './legal/cookies.html?v=1.1.0',
+  './legal/aviso-legal.html?v=1.1.0'
 ];
 
 // Instalación: Precaché forzado y activación inmediata
@@ -36,7 +36,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Precaché v1.0.6 completado');
+      console.log('[SW] Precaché v1.1.0 completado');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -128,7 +128,7 @@ self.addEventListener('fetch', (event) => {
           return caches.match(request).then((cachedResponse) => {
             if (cachedResponse) return cachedResponse;
             if (request.destination === 'document') {
-              return caches.match('./index.html?v=1.0.6') || caches.match('./');
+              return caches.match('./index.html?v=1.1.0') || caches.match('./');
             }
           });
         })
