@@ -65,7 +65,6 @@ function initDomReferences() {
     btnOpenHistory: document.getElementById('btnOpenHistory'),
     historyModal: document.getElementById('historyModal'),
     historyModalClose: document.getElementById('historyModalClose'),
-    historyModalCloseBtn: document.getElementById('historyModalCloseBtn'),
     chartContainer: document.getElementById('chartContainer'),
     historyBcvChange: document.getElementById('historyBcvChange'),
     historyUsdtChange: document.getElementById('historyUsdtChange'),
@@ -602,7 +601,6 @@ function bindEvents() {
 
   // Cierre de modal de historial
   if (els.historyModalClose) els.historyModalClose.addEventListener('click', closeHistoryModal);
-  if (els.historyModalCloseBtn) els.historyModalCloseBtn.addEventListener('click', closeHistoryModal);
   if (els.historyModal) {
     els.historyModal.addEventListener('click', (e) => {
       if (e.target === els.historyModal) closeHistoryModal();
