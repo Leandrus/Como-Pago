@@ -594,6 +594,36 @@ function bindEvents() {
   els.btnEdit.addEventListener('click', showInputsView);
   els.btnReset.addEventListener('click', handleResetAll);
 
+  // Botones para copiar montos en Bolívares
+  document.querySelectorAll('.btn-copy-val').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const targetId = btn.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (!input) return;
+
+      const rawVal = input.value.trim();
+      if (!rawVal || parseFloat(rawVal) <= 0) return;
+
+      try {
+        await navigator.clipboard.writeText(rawVal);
+        btn.classList.add('copied');
+        btn.setAttribute('title', '¡Copiado!');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.setAttribute('title', 'Copiar monto en Bs');
+        }, 1800);
+      } catch (err) {
+        // Fallback clásico con execCommand si clipboard API falla
+        input.select();
+        document.execCommand('copy');
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1800);
+      }
+    });
+  });
+
   // Botón para abrir el modal de historial y gráfico
   if (els.btnOpenHistory) {
     els.btnOpenHistory.addEventListener('click', openHistoryModal);

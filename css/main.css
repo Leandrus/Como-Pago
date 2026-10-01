@@ -344,7 +344,7 @@ input[type="number"] {
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: all var(--transition-normal);
-  margin-top: 0.25rem;
+  margin-top: 0.6rem;
 }
 
 .guide-card[open] {
@@ -447,6 +447,7 @@ input[type="number"] {
   font-size: 0.75rem;
   color: var(--text-dim);
   text-align: center;
+  margin-top: 0.6rem;
 }
 
 .rates-diff {
@@ -578,6 +579,89 @@ input[type="number"] {
 
 .offer-dual-inputs .input-usd-avg {
   color: #fcd34d;
+}
+
+.offer-dual-inputs .input-ves {
+  padding-right: 3.5rem !important;
+  text-align: center;
+  padding-left: 0.5rem;
+}
+
+.input-suffix-actions {
+  position: absolute;
+  right: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.input-suffix-text {
+  font-size: 0.82rem;
+  font-weight: 700;
+  pointer-events: none;
+  user-select: none;
+}
+
+.input-suffix-text.green {
+  color: var(--color-bcv);
+}
+
+.input-suffix-text.yellow {
+  color: var(--color-usdt);
+}
+
+.btn-copy-val {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-dim);
+  border-radius: var(--radius-sm);
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+.btn-copy-val:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.btn-copy-val:active {
+  transform: translateY(0) scale(0.94);
+}
+
+.btn-copy-val .copy-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-copy-val .check-icon {
+  width: 13px;
+  height: 13px;
+  display: none;
+  color: #34d399;
+}
+
+.btn-copy-val.copied {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #34d399;
+  transform: scale(1.05);
+}
+
+.btn-copy-val.copied .copy-icon {
+  display: none;
+}
+
+.btn-copy-val.copied .check-icon {
+  display: block;
 }
 
 .input-readonly {
@@ -1014,8 +1098,7 @@ input[type="number"] {
 .history-trigger-container {
   display: flex;
   justify-content: center;
-  margin-top: 0.6rem;
-  margin-bottom: 0.2rem;
+  margin: 0.6rem 0.6rem;
 }
 
 .btn-history-trigger {
@@ -1221,8 +1304,15 @@ input[type="number"] {
 }
 
 @keyframes fadeInTooltip {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tooltip-date {

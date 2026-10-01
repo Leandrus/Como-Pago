@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>¿Cómo Pago en Venezuela? | Calculadora Financiera y Comparador de Tasas BCV vs USDT</title>
-  
+
   <!-- Metadatos SEO Esenciales -->
-  <meta name="description" content="Calculadora de comparación de precios en Venezuela. Compara la tasa oficial del BCV, compra de dólares físicos y transferencias en USDT para saber cómo te conviene pagar y ahorrar dinero.">
-  <meta name="keywords" content="como pago venezuela, calculadora dolar venezuela, tasa bcv, dolar paralelo, usdt binance, calcular pago bcv vs paralelo, convertidor bcv usdt">
+  <meta name="description"
+    content="Calculadora de comparación de precios en Venezuela. Compara la tasa oficial del BCV, compra de dólares físicos y transferencias en USDT para saber cómo te conviene pagar y ahorrar dinero.">
+  <meta name="keywords"
+    content="como pago venezuela, calculadora dolar venezuela, tasa bcv, dolar paralelo, usdt binance, calcular pago bcv vs paralelo, convertidor bcv usdt">
   <meta name="author" content="Leandrus">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://como-pago.leandrus.net/">
@@ -16,14 +19,16 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://como-pago.leandrus.net/">
   <meta property="og:title" content="¿Cómo Pago en Venezuela? | Calculadora de Tasas BCV vs USDT">
-  <meta property="og:description" content="Compara en segundos si te conviene pagar en Bolívares (Tasa BCV), Dólares en Efectivo o USDT. Tasas oficiales en tiempo real vía api-dolar.leandrus.net.">
+  <meta property="og:description"
+    content="Compara en segundos si te conviene pagar en Bolívares (Tasa BCV), Dólares en Efectivo o USDT. Tasas oficiales en tiempo real vía api-dolar.leandrus.net.">
   <meta property="og:image" content="https://como-pago.leandrus.net/icons/icon-512x512.png">
   <meta property="og:locale" content="es_VE">
 
   <!-- Metadatos Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="¿Cómo Pago en Venezuela? | Calculadora de Tasas BCV vs USDT">
-  <meta name="twitter:description" content="Descubre al instante el método de pago más económico en Venezuela y calcula la transferencia exacta en Binance USDT.">
+  <meta name="twitter:description"
+    content="Descubre al instante el método de pago más económico en Venezuela y calcula la transferencia exacta en Binance USDT.">
   <meta name="twitter:image" content="https://como-pago.leandrus.net/icons/icon-512x512.png">
 
   <!-- Configuración PWA y Favicon -->
@@ -43,7 +48,8 @@
   <!-- Tipografía Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Estilos Modulares (Vanilla CSS Puro Versionado para Cache-Busting) -->
   <link rel="stylesheet" href="css/main.css?v=1.0.6">
@@ -72,208 +78,278 @@
   }
   </script>
 </head>
+
 <body>
 
   <!-- Contenedor Principal de la App -->
   <div class="app-container">
-    
+
     <!-- Pantalla Principal Visible (100dvh) -->
     <div class="app-content-wrapper">
       <!-- Encabezado de la Plataforma -->
       <header class="app-header">
-      <div class="brand-badge" id="liveStatusBadge" title="Conexión en vivo con api-dolar.leandrus.net">
-        <span class="status-dot"></span>
-        <span id="liveStatusText">Tasas en Vivo</span>
-      </div>
-      <h1 class="app-title">¿Cómo Pago?</h1>
-      <p class="app-description">
-        En Venezuela, pagar en <strong>dólares en efectivo</strong> o transferir por <strong>Binance USDT</strong> tiene el mismo valor (tasa paralelo). Compara al instante si te conviene pagar en <strong>Bolívares (Tasa BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
-      </p>
-
-      <!-- Guía Desplegable: Casos de Uso y Funcionamiento -->
-      <details class="guide-card" id="guideAccordion">
-        <summary class="guide-toggle">
-          <span class="guide-toggle-label">
-            <svg class="guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            ¿Cómo funciona y casos de uso cotidianos?
-          </span>
-          <svg class="guide-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </summary>
-        <div class="guide-content">
-          <div class="guide-step">
-            <span class="guide-step-num">1</span>
-            <div class="guide-step-body">
-              <strong>Efectivo y USDT son lo mismo:</strong> En el mercado venezolano, 1 Dólar físico equivale a 1 USDT y ambos se cotizan a la tasa paralelo. No requieres cálculos distintos.
-            </div>
-          </div>
-          <div class="guide-step">
-            <span class="guide-step-num">2</span>
-            <div class="guide-step-body">
-              <strong>Evaluar descuentos comerciales:</strong> Si te dicen: <em>"$50 a tasa BCV o $45 si pagas en dólares"</em>, la app compara ambas opciones y te dice en cuál desembolsas menos dinero real.
-            </div>
-          </div>
-          <div class="guide-step">
-            <span class="guide-step-num">3</span>
-            <div class="guide-step-body">
-              <strong>Ahorro inmediato y directo:</strong> Sabrás con exactitud cuántos Bolívares y Dólares estás ahorrando antes de pagar.
-            </div>
-          </div>
-          <div class="guide-step">
-            <span class="guide-step-num">4</span>
-            <div class="guide-step-body">
-              <strong>Tasas en vivo y editables:</strong> Se sincronizan automáticamente con <em>api-dolar.leandrus.net</em> y puedes pulsar sobre cualquiera de ellas para adaptarla a la tasa de tu tienda.
-            </div>
-          </div>
+        <div class="brand-badge" id="liveStatusBadge" title="Conexión en vivo con api-dolar.leandrus.net">
+          <span class="status-dot"></span>
+          <span id="liveStatusText">Tasas en Vivo</span>
         </div>
-      </details>
-    </header>
+        <h1 class="app-title">¿Cómo Pago?</h1>
+        <p class="app-description">
+          Compara al instante si te conviene pagar en <strong>Bolívares (Tasa
+            BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
+        </p>
 
-    <main>
-      <!-- ============================================== -->
-      <!-- SECCIÓN 1: ENTRADA DE DATOS (INPUTS) -->
-      <!-- ============================================== -->
-      <section id="section1" class="space-y-4" aria-label="Ingreso de tasas y precios de compra">
-        
-        <!-- Tarjetas de Tasas Principales -->
-        <div class="rates-grid">
-          <!-- Tasa BCV Oficial (Verde) -->
-          <article class="rate-card bcv">
-            <div class="rate-header">
-              <span class="rate-label bcv">Tasa Oficial (BCV)</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        <!-- Guía Desplegable: Casos de Uso y Funcionamiento -->
+        <details class="guide-card" id="guideAccordion">
+          <summary class="guide-toggle">
+            <span class="guide-toggle-label">
+              <svg class="guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
+              ¿Cómo funciona y casos de uso cotidianos?
+            </span>
+            <svg class="guide-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="guide-content">
+            <div class="guide-step">
+              <span class="guide-step-num">1</span>
+              <div class="guide-step-body">
+                <strong>Efectivo y USDT son lo mismo:</strong> En el mercado venezolano, 1 Dólar físico equivale a 1
+                USDT y ambos se cotizan a la tasa paralelo. No requieres cálculos distintos.
+              </div>
             </div>
-            <div class="rate-value-wrap">
-              <span class="currency-symbol bcv">Bs.</span>
-              <input type="number" step="0.01" id="bcvDisplay" class="rate-input bcv" placeholder="0.00" aria-label="Tasa oficial BCV en Bolívares">
+            <div class="guide-step">
+              <span class="guide-step-num">2</span>
+              <div class="guide-step-body">
+                <strong>Evaluar descuentos comerciales:</strong> Si te dicen: <em>"$50 a tasa BCV o $45 si pagas en
+                  dólares"</em>, la app compara ambas opciones y te dice en cuál desembolsas menos dinero real.
+              </div>
             </div>
-            <div id="bcvLoader" class="rate-loader" aria-hidden="true"></div>
-          </article>
+            <div class="guide-step">
+              <span class="guide-step-num">3</span>
+              <div class="guide-step-body">
+                <strong>Ahorro inmediato y directo:</strong> Sabrás con exactitud cuántos Bolívares y Dólares estás
+                ahorrando antes de pagar.
+              </div>
+            </div>
+            <div class="guide-step">
+              <span class="guide-step-num">4</span>
+              <div class="guide-step-body">
+                <strong>Tasas en vivo y editables:</strong> Se sincronizan automáticamente con
+                <em>api-dolar.leandrus.net</em> y puedes pulsar sobre cualquiera de ellas para adaptarla a la tasa de tu
+                tienda.
+              </div>
+            </div>
+          </div>
+        </details>
+      </header>
 
-          <!-- Tasa USDT / Binance Paralelo (Ámbar) -->
-          <article class="rate-card usdt">
-            <div class="rate-header">
-              <span class="rate-label usdt">Dólar (Efectivo/USDT)</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+      <main>
+        <!-- ============================================== -->
+        <!-- SECCIÓN 1: ENTRADA DE DATOS (INPUTS) -->
+        <!-- ============================================== -->
+        <section id="section1" class="space-y-4" aria-label="Ingreso de tasas y precios de compra">
+
+          <!-- Tarjetas de Tasas Principales -->
+          <div class="rates-grid">
+            <!-- Tasa BCV Oficial (Verde) -->
+            <article class="rate-card bcv">
+              <div class="rate-header">
+                <span class="rate-label bcv">Tasa Oficial (BCV)</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+              <div class="rate-value-wrap">
+                <span class="currency-symbol bcv">Bs.</span>
+                <input type="number" step="0.01" id="bcvDisplay" class="rate-input bcv" placeholder="0.00"
+                  aria-label="Tasa oficial BCV en Bolívares">
+              </div>
+              <div id="bcvLoader" class="rate-loader" aria-hidden="true"></div>
+            </article>
+
+            <!-- Tasa USDT / Binance Paralelo (Ámbar) -->
+            <article class="rate-card usdt">
+              <div class="rate-header">
+                <span class="rate-label usdt">Dólar (Efectivo/USDT)</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+              <div class="rate-value-wrap">
+                <span class="currency-symbol usdt">Bs.</span>
+                <input type="number" step="0.01" id="usdtDisplay" class="rate-input usdt" placeholder="0.00"
+                  aria-label="Tasa Binance P2P USDT en Bolívares">
+              </div>
+              <div id="usdtLoader" class="rate-loader" aria-hidden="true"></div>
+            </article>
+          </div>
+
+          <!-- Diferencia y Marca Temporal de la API -->
+          <div class="rates-meta">
+            <div class="rates-diff">
+              Diferencia: <span id="rateDiff">Sincronizando...</span>
+            </div>
+            <div class="api-timestamp" id="apiTimestamp">
+              Conectando a api-dolar.leandrus.net...
+            </div>
+          </div>
+
+          <!-- Botón Desplegable para Historial y Fluctuación -->
+          <div class="history-trigger-container">
+            <button type="button" id="btnOpenHistory" class="btn-history-trigger"
+              aria-label="Ver historial de tasas y gráfico de fluctuación">
+              <svg class="history-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
               </svg>
-            </div>
-            <div class="rate-value-wrap">
-              <span class="currency-symbol usdt">Bs.</span>
-              <input type="number" step="0.01" id="usdtDisplay" class="rate-input usdt" placeholder="0.00" aria-label="Tasa Binance P2P USDT en Bolívares">
-            </div>
-            <div id="usdtLoader" class="rate-loader" aria-hidden="true"></div>
-          </article>
-        </div>
-
-        <!-- Diferencia y Marca Temporal de la API -->
-        <div class="rates-meta">
-          <div class="rates-diff">
-            Diferencia: <span id="rateDiff">Sincronizando...</span>
+              <span>Ver Historial y Fluctuación</span>
+              <span class="history-badge">1S • 1M • 3M • 1A</span>
+            </button>
           </div>
-          <div class="api-timestamp" id="apiTimestamp">
-            Conectando a api-dolar.leandrus.net...
-          </div>
-        </div>
 
-        <!-- Botón Desplegable para Historial y Fluctuación -->
-        <div class="history-trigger-container">
-          <button type="button" id="btnOpenHistory" class="btn-history-trigger" aria-label="Ver historial de tasas y gráfico de fluctuación">
-            <svg class="history-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-            <span>Ver Historial y Fluctuación</span>
-            <span class="history-badge">1S • 1M • 3M • 1A</span>
-          </button>
-        </div>
+          <hr class="separator">
 
-        <hr class="separator">
-
-        <!-- Ofertas Comparativas (Conversión BCV vs Dólares) -->
-        <div class="offers-section">
-          <!-- Opción 1: Pago en Bolívares con Tasa Oficial BCV -->
-          <div class="offer-group">
-            <label for="price_bcv_usd_input" class="offer-label bcv">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              Opción 1: Cotizado a Tasa Oficial BCV (Pago en Bolívares)
-            </label>
-            <div class="offer-dual-inputs">
-              <div class="input-with-icon" title="Monto en Dólares ($)">
-                <span class="input-prefix" style="color: #34d399;">$</span>
-                <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv" placeholder="0.00" aria-label="Monto en dólares a tasa oficial">
-              </div>
-              <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
-                <input type="number" step="any" id="price_bcv_ves_input" class="input-control" placeholder="0.00" aria-label="Monto en bolívares a tasa oficial">
-                <span class="input-suffix green">Bs.</span>
+          <!-- Ofertas Comparativas (Conversión BCV vs Dólares) -->
+          <div class="offers-section">
+            <!-- Opción 1: Pago en Bolívares con Tasa Oficial BCV -->
+            <div class="offer-group">
+              <label for="price_bcv_usd_input" class="offer-label bcv">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Opción 1: Cotizado a Tasa Oficial BCV
+              </label>
+              <div class="offer-dual-inputs">
+                <div class="input-with-icon" title="Monto en Dólares ($)">
+                  <span class="input-prefix" style="color: #34d399;">$</span>
+                  <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv"
+                    placeholder="0.00" aria-label="Monto en dólares a tasa oficial">
+                </div>
+                <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
+                  <input type="number" step="any" id="price_bcv_ves_input" class="input-control input-ves"
+                    placeholder="0.00" aria-label="Monto en bolívares a tasa oficial">
+                  <div class="input-suffix-actions">
+                    <span class="input-suffix-text green">Bs.</span>
+                    <button type="button" class="btn-copy-val" data-target="price_bcv_ves_input"
+                      title="Copiar monto en Bs" aria-label="Copiar monto en bolívares a tasa oficial">
+                      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Opción 2: Pago en Dólares (Efectivo o Binance USDT) -->
-          <div class="offer-group">
-            <label for="price_parallel_usd_input" class="offer-label avg">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              Opción 2: Cotizado en Dólares (Efectivo o Binance USDT)
-            </label>
-            <div class="offer-dual-inputs">
-              <div class="input-with-icon" title="Monto en Dólares ($)">
-                <span class="input-prefix" style="color: #fcd34d;">$</span>
-                <input type="number" step="any" id="price_parallel_usd_input" class="input-control input-usd-avg" placeholder="0.00" aria-label="Monto en dólares en efectivo o USDT">
-              </div>
-              <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
-                <input type="number" step="any" id="price_parallel_ves_input" class="input-control" placeholder="0.00" aria-label="Monto en bolívares a tasa paralelo/USDT">
-                <span class="input-suffix yellow">Bs.</span>
+            <!-- Opción 2: Pago en Dólares (Efectivo o Binance USDT) -->
+            <div class="offer-group">
+              <label for="price_parallel_usd_input" class="offer-label avg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Opción 2: Cotizado en Dólares o USDT
+              </label>
+              <div class="offer-dual-inputs">
+                <div class="input-with-icon" title="Monto en Dólares ($)">
+                  <span class="input-prefix" style="color: #fcd34d;">$</span>
+                  <input type="number" step="any" id="price_parallel_usd_input" class="input-control input-usd-avg"
+                    placeholder="0.00" aria-label="Monto en dólares en efectivo o USDT">
+                </div>
+                <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
+                  <input type="number" step="any" id="price_parallel_ves_input" class="input-control input-ves"
+                    placeholder="0.00" aria-label="Monto en bolívares a tasa paralelo/USDT">
+                  <div class="input-suffix-actions">
+                    <span class="input-suffix-text yellow">Bs.</span>
+                    <button type="button" class="btn-copy-val" data-target="price_parallel_ves_input"
+                      title="Copiar monto en Bs" aria-label="Copiar monto en bolívares a tasa paralelo/USDT">
+                      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Botón de Cálculo -->
-        <button id="btnCalculate" type="button" class="btn btn-primary" aria-label="Calcular método de pago más conveniente">
-          <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M 2.5,0 C 1.12,0 0,1.12 0,2.5 v 15 C 0,18.88 1.12,20 2.5,20 h 10 C 13.88,20 15,18.88 15,17.5 V 2.5 C 15,1.12 13.88,0 12.5,0 Z m 1.25,2.5 h 7.5 c 0.69,0 1.25,0.56 1.25,1.25 V 5 c 0,0.69 -0.56,1.25 -1.25,1.25 H 3.75 C 3.06,6.25 2.5,5.69 2.5,5 V 3.75 C 2.5,3.06 3.06,2.5 3.75,2.5 Z M 4.38,9.06 C 4.38,9.58 3.96,10 3.44,10 2.92,10 2.5,9.58 2.5,9.06 2.5,8.54 2.92,8.12 3.44,8.12 3.96,8.12 4.38,8.54 4.38,9.06 Z M 7.5,10 C 6.98,10 6.56,9.58 6.56,9.06 6.56,8.54 6.98,8.12 7.5,8.12 8.02,8.12 8.44,8.54 8.44,9.06 8.44,9.58 8.02,10 7.5,10 Z m 5,-0.94 C 12.5,9.58 12.08,10 11.56,10 11.04,10 10.62,9.58 10.62,9.06 c 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 z M 3.44,13.75 C 2.92,13.75 2.5,13.33 2.5,12.81 c 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 z m 5,-0.94 c 0,0.52 -0.42,0.94 -0.94,0.94 -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 z m 3.12,0.94 c -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 z M 2.5,16.56 c 0,-0.52 0.42,-0.94 0.94,-0.94 h 4.38 c 0.52,0 0.94,0.42 0.94,0.94 C 8.75,17.08 8.33,17.5 7.81,17.5 H 3.44 C 2.92,17.5 2.5,17.08 2.5,16.56 Z m 9.06,-0.94 c 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 z" clip-rule="evenodd" />
-          </svg>
-          Calcular Conveniencia
-        </button>
-      </section>
-
-      <!-- ============================================== -->
-      <!-- SECCIÓN 2: RESULTADOS Y CONTROLES (OUTPUTS) -->
-      <!-- ============================================== -->
-      <section id="section2" class="space-y-4 hidden" aria-label="Resultados del análisis financiero">
-        
-        <!-- Tarjeta Unificada de Resultado y Recomendación -->
-        <article class="card results-card" id="recommendationBox">
-          <h2 class="results-title">Conviene pagar en:</h2>
-          <div class="results-verdict" id="finalVerdict">...</div>
-          <div class="results-details" id="savingsText"></div>
-
-          <!-- Nota de Equivalencia Simplificada Dólares / USDT -->
-          <div class="results-equivalence-pill" id="equivalenceBox">
-            <span class="equiv-icon">💡</span>
-            <span id="equivalenceText">...</span>
-          </div>
-        </article>
-
-        <!-- Botones de Acción (Editar / Reiniciar) -->
-        <div class="buttons-grid">
-          <button id="btnEdit" type="button" class="btn btn-secondary" aria-label="Volver a editar montos">
-            <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="m 18.613646,0.64828063c -0.864374,-0.86437417 -2.261581,-0.86437417 -3.125955,0l -0.963047,0.96304697 3.864028,3.8640289 0.963047,-0.9630471c 0.864375,-0.8643741 0.864375,-2.2615817 0,-3.1259559zM 6.8044797,9.3314914C 6.563718,9.5722532 6.378213,9.8682717 6.2716464,10.195866l -1.1682866,3.504859c -0.1144605,0.339435 -0.023681,0.714392 0.228921,0.970941 0.2526025,0.25655 0.6275593,0.343382 0.9709409,0.228921L 9.8080813,13.732301C 10.131728,13.625734 10.427747,13.440229 10.672455,13.199467L 17.050669,6.8133603 13.18664,2.9493315ZM 3.7890374,2.3178253C 1.697173,2.3178253 0,4.0149983 0,6.1068627V 16.210963C 0,18.302827 1.697173,20 3.7890374,20H 13.893137c 2.091865,0 3.789038,-1.697173 3.789038,-3.789037v -3.789038c 0,-0.698604 -0.564409,-1.263012 -1.263013,-1.263012 -0.698604,0 -1.263012,0.564408 -1.263012,1.263012v 3.789038c 0,0.698603 -0.564409,1.263012 -1.263013,1.263012H 3.7890374c -0.6986037,0 -1.2630124,-0.564409 -1.2630124,-1.263012V 6.1068627c 0,-0.6986038 0.5644087,-1.2630125 1.2630124,-1.2630125h 3.7890375c 0.6986038,0 1.2630125,-0.5644087 1.2630125,-1.2630125 0,-0.6986037 -0.5644087,-1.2630124 -1.2630125,-1.2630124z" clip-rule="evenodd" />
-            </svg>
-            Editar
-          </button>
-          
-          <button id="btnReset" type="button" class="btn btn-primary" aria-label="Reiniciar formulario y recargar tasas">
+          <!-- Botón de Cálculo -->
+          <button id="btnCalculate" type="button" class="btn btn-primary"
+            aria-label="Calcular método de pago más conveniente">
             <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M 1.25,-3.3333334e-8A 1.25,1.25 0 0 1 2.5,1.25v 2.62625a 8.7525,8.7525 0 0 1 14.501251,3.2075 1.25,1.25 0 1 1 -2.35625,0.8325A 6.2525,6.2525 0 0 0 3.74875,6.25h 3.751251a 1.25,1.25 0 0 1 0,2.5H 1.25A 1.25,1.25 0 0 1 0,7.5V 1.25A 1.25,1.25 0 0 1 1.25,-3.3333334e-8ZM 1.26,11.32125a 1.25,1.25 0 0 1 1.595,0.7625 6.2525,6.2525 0 0 0 10.896251,1.66625h -3.75125a 1.25,1.25 0 1 1 0,-2.5h 6.25a 1.25,1.25 0 0 1 1.25,1.25v 6.25a 1.25,1.25 0 1 1 -2.5,0v -2.62625a 8.7525,8.7525 0 0 1 -14.501251,-3.2075 1.25,1.25 0 0 1 0.7625,-1.595z" clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M 2.5,0 C 1.12,0 0,1.12 0,2.5 v 15 C 0,18.88 1.12,20 2.5,20 h 10 C 13.88,20 15,18.88 15,17.5 V 2.5 C 15,1.12 13.88,0 12.5,0 Z m 1.25,2.5 h 7.5 c 0.69,0 1.25,0.56 1.25,1.25 V 5 c 0,0.69 -0.56,1.25 -1.25,1.25 H 3.75 C 3.06,6.25 2.5,5.69 2.5,5 V 3.75 C 2.5,3.06 3.06,2.5 3.75,2.5 Z M 4.38,9.06 C 4.38,9.58 3.96,10 3.44,10 2.92,10 2.5,9.58 2.5,9.06 2.5,8.54 2.92,8.12 3.44,8.12 3.96,8.12 4.38,8.54 4.38,9.06 Z M 7.5,10 C 6.98,10 6.56,9.58 6.56,9.06 6.56,8.54 6.98,8.12 7.5,8.12 8.02,8.12 8.44,8.54 8.44,9.06 8.44,9.58 8.02,10 7.5,10 Z m 5,-0.94 C 12.5,9.58 12.08,10 11.56,10 11.04,10 10.62,9.58 10.62,9.06 c 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 z M 3.44,13.75 C 2.92,13.75 2.5,13.33 2.5,12.81 c 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 z m 5,-0.94 c 0,0.52 -0.42,0.94 -0.94,0.94 -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 z m 3.12,0.94 c -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 z M 2.5,16.56 c 0,-0.52 0.42,-0.94 0.94,-0.94 h 4.38 c 0.52,0 0.94,0.42 0.94,0.94 C 8.75,17.08 8.33,17.5 7.81,17.5 H 3.44 C 2.92,17.5 2.5,17.08 2.5,16.56 Z m 9.06,-0.94 c 0.52,0 0.94,0.42 0.94,0.94 0,0.52 -0.42,0.94 -0.94,0.94 -0.52,0 -0.94,-0.42 -0.94,-0.94 0,-0.52 0.42,-0.94 0.94,-0.94 z"
+                clip-rule="evenodd" />
             </svg>
-            Reiniciar
+            Calcular Conveniencia
           </button>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SECCIÓN 2: RESULTADOS Y CONTROLES (OUTPUTS) -->
+        <!-- ============================================== -->
+        <section id="section2" class="space-y-4 hidden" aria-label="Resultados del análisis financiero">
+
+          <!-- Tarjeta Unificada de Resultado y Recomendación -->
+          <article class="card results-card" id="recommendationBox">
+            <h2 class="results-title">Conviene pagar en:</h2>
+            <div class="results-verdict" id="finalVerdict">...</div>
+            <div class="results-details" id="savingsText"></div>
+
+            <!-- Nota de Equivalencia Simplificada Dólares / USDT -->
+            <div class="results-equivalence-pill" id="equivalenceBox">
+              <span class="equiv-icon">💡</span>
+              <span id="equivalenceText">...</span>
+            </div>
+          </article>
+
+          <!-- Botones de Acción (Editar / Reiniciar) -->
+          <div class="buttons-grid">
+            <button id="btnEdit" type="button" class="btn btn-secondary" aria-label="Volver a editar montos">
+              <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="m 18.613646,0.64828063c -0.864374,-0.86437417 -2.261581,-0.86437417 -3.125955,0l -0.963047,0.96304697 3.864028,3.8640289 0.963047,-0.9630471c 0.864375,-0.8643741 0.864375,-2.2615817 0,-3.1259559zM 6.8044797,9.3314914C 6.563718,9.5722532 6.378213,9.8682717 6.2716464,10.195866l -1.1682866,3.504859c -0.1144605,0.339435 -0.023681,0.714392 0.228921,0.970941 0.2526025,0.25655 0.6275593,0.343382 0.9709409,0.228921L 9.8080813,13.732301C 10.131728,13.625734 10.427747,13.440229 10.672455,13.199467L 17.050669,6.8133603 13.18664,2.9493315ZM 3.7890374,2.3178253C 1.697173,2.3178253 0,4.0149983 0,6.1068627V 16.210963C 0,18.302827 1.697173,20 3.7890374,20H 13.893137c 2.091865,0 3.789038,-1.697173 3.789038,-3.789037v -3.789038c 0,-0.698604 -0.564409,-1.263012 -1.263013,-1.263012 -0.698604,0 -1.263012,0.564408 -1.263012,1.263012v 3.789038c 0,0.698603 -0.564409,1.263012 -1.263013,1.263012H 3.7890374c -0.6986037,0 -1.2630124,-0.564409 -1.2630124,-1.263012V 6.1068627c 0,-0.6986038 0.5644087,-1.2630125 1.2630124,-1.2630125h 3.7890375c 0.6986038,0 1.2630125,-0.5644087 1.2630125,-1.2630125 0,-0.6986037 -0.5644087,-1.2630124 -1.2630125,-1.2630124z"
+                  clip-rule="evenodd" />
+              </svg>
+              Editar
+            </button>
+
+            <button id="btnReset" type="button" class="btn btn-primary"
+              aria-label="Reiniciar formulario y recargar tasas">
+              <svg xmlns="http://www.w3.org/2000/svg" class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M 1.25,-3.3333334e-8A 1.25,1.25 0 0 1 2.5,1.25v 2.62625a 8.7525,8.7525 0 0 1 14.501251,3.2075 1.25,1.25 0 1 1 -2.35625,0.8325A 6.2525,6.2525 0 0 0 3.74875,6.25h 3.751251a 1.25,1.25 0 0 1 0,2.5H 1.25A 1.25,1.25 0 0 1 0,7.5V 1.25A 1.25,1.25 0 0 1 1.25,-3.3333334e-8ZM 1.26,11.32125a 1.25,1.25 0 0 1 1.595,0.7625 6.2525,6.2525 0 0 0 10.896251,1.66625h -3.75125a 1.25,1.25 0 1 1 0,-2.5h 6.25a 1.25,1.25 0 0 1 1.25,1.25v 6.25a 1.25,1.25 0 1 1 -2.5,0v -2.62625a 8.7525,8.7525 0 0 1 -14.501251,-3.2075 1.25,1.25 0 0 1 0.7625,-1.595z"
+                  clip-rule="evenodd" />
+              </svg>
+              Reiniciar
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
 
     <!-- Pie de Página & Andamiaje Legal (por debajo de la visibilidad inicial) -->
@@ -287,11 +363,13 @@
         <span style="color: var(--border-strong);">•</span>
         <a href="legal/aviso-legal.html" class="footer-link" data-legal="aviso">Aviso Legal</a>
         <span style="color: var(--border-strong);">•</span>
-        <button type="button" class="footer-btn-consent" onclick="window.ConsentManager.openPreferences()">Gestionar Cookies</button>
+        <button type="button" class="footer-btn-consent" onclick="window.ConsentManager.openPreferences()">Gestionar
+          Cookies</button>
       </nav>
 
       <div class="footer-meta">
-        Desarrollado de forma abierta por <a href="https://github.com/Leandrus/Como-Pago" target="_blank" rel="noopener">Leandrus</a> • Licencia MIT
+        Desarrollado de forma abierta por <a href="https://github.com/Leandrus/Como-Pago" target="_blank"
+          rel="noopener">Leandrus</a> • Licencia MIT
       </div>
 
       <div class="footer-api-badge">
@@ -309,14 +387,19 @@
       <div class="modal-header">
         <h2 id="legalModalTitle" class="modal-title">Documento Legal</h2>
         <button id="legalModalClose" class="modal-close-btn" aria-label="Cerrar modal">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
       <div id="legalModalContent" class="modal-body">
         <!-- El contenido se inyecta dinámicamente -->
       </div>
       <div class="modal-footer">
-        <button id="legalModalAccept" type="button" class="btn btn-secondary" style="width: auto; padding: 0.6rem 1.25rem;">Entendido</button>
+        <button id="legalModalAccept" type="button" class="btn btn-secondary"
+          style="width: auto; padding: 0.6rem 1.25rem;">Entendido</button>
       </div>
     </div>
   </div>
@@ -328,11 +411,19 @@
     <div class="modal-dialog history-modal-dialog">
       <div class="modal-header">
         <div class="history-modal-header-title">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+            style="color: var(--color-primary);">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
           <h2 id="historyModalTitle" class="modal-title">Historial y Fluctuación</h2>
         </div>
         <button id="historyModalClose" class="modal-close-btn" aria-label="Cerrar modal de historial">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
 
@@ -341,7 +432,8 @@
         <div class="period-selector-wrap">
           <div class="period-selector" role="tablist" aria-label="Seleccionar período de tiempo">
             <button type="button" class="period-tab" data-period="1S" role="tab" aria-selected="false">1 Sem</button>
-            <button type="button" class="period-tab active" data-period="1M" role="tab" aria-selected="true">1 Mes</button>
+            <button type="button" class="period-tab active" data-period="1M" role="tab" aria-selected="true">1
+              Mes</button>
             <button type="button" class="period-tab" data-period="3M" role="tab" aria-selected="false">3 Meses</button>
             <button type="button" class="period-tab" data-period="1A" role="tab" aria-selected="false">1 Año</button>
           </div>
@@ -415,11 +507,20 @@
   <!-- ============================================== -->
   <div id="cmp-banner" class="cmp-banner" role="region" aria-label="Consentimiento de privacidad y cookies">
     <div class="cmp-banner-header">
-      <svg class="cmp-banner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path><path d="M8.5 8.5v.01"></path><path d="M7 13.5v.01"></path><path d="M12 17.5v.01"></path><path d="M16.5 13.5v.01"></path></svg>
+      <svg class="cmp-banner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+        <path d="M8.5 8.5v.01"></path>
+        <path d="M7 13.5v.01"></path>
+        <path d="M12 17.5v.01"></path>
+        <path d="M16.5 13.5v.01"></path>
+      </svg>
       <h3 class="cmp-banner-title">Tu Privacidad y Almacenamiento Local</h3>
     </div>
     <p class="cmp-banner-text">
-      Utilizamos tecnologías de almacenamiento local en tu navegador exclusivamente para recordar tus cálculos y permitir el funcionamiento sin conexión (PWA). No empleamos rastreadores publicitarios. Consulta nuestra <a href="legal/privacidad.html" data-legal="privacidad">Política de Privacidad</a>.
+      Utilizamos tecnologías de almacenamiento local en tu navegador exclusivamente para recordar tus cálculos y
+      permitir el funcionamiento sin conexión (PWA). No empleamos rastreadores publicitarios. Consulta nuestra <a
+        href="legal/privacidad.html" data-legal="privacidad">Política de Privacidad</a>.
     </p>
     <div class="cmp-banner-actions">
       <button id="cmp-btn-accept" type="button" class="cmp-btn cmp-btn-accept">Aceptar todas</button>
@@ -434,7 +535,11 @@
       <div class="cmp-modal-header">
         <h3 id="cmpModalTitle" class="cmp-modal-title">Preferencias de Almacenamiento</h3>
         <button id="cmp-modal-close" class="cmp-modal-close" aria-label="Cerrar configuración">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
       <div class="cmp-modal-body">
@@ -454,7 +559,8 @@
               <span class="cmp-slider"></span>
             </label>
           </div>
-          <p class="cmp-category-desc">Imprescindibles para el registro del Service Worker (PWA), caché de tasas y modo sin conexión.</p>
+          <p class="cmp-category-desc">Imprescindibles para el registro del Service Worker (PWA), caché de tasas y modo
+            sin conexión.</p>
         </div>
 
         <!-- Categoría: Preferencias -->
@@ -468,7 +574,8 @@
               <span class="cmp-slider"></span>
             </label>
           </div>
-          <p class="cmp-category-desc">Guarda los montos y cotizaciones ingresados para que no tengas que escribirlos cada vez que regreses.</p>
+          <p class="cmp-category-desc">Guarda los montos y cotizaciones ingresados para que no tengas que escribirlos
+            cada vez que regreses.</p>
         </div>
 
         <!-- Categoría: Analíticas Anónimas -->
@@ -482,11 +589,13 @@
               <span class="cmp-slider"></span>
             </label>
           </div>
-          <p class="cmp-category-desc">Permite evaluar anónimamente tiempos de respuesta y estabilidad de la API sin identificar al usuario.</p>
+          <p class="cmp-category-desc">Permite evaluar anónimamente tiempos de respuesta y estabilidad de la API sin
+            identificar al usuario.</p>
         </div>
       </div>
       <div class="cmp-modal-footer">
-        <button id="cmp-btn-save-modal" type="button" class="cmp-btn cmp-btn-accept" style="width: auto; padding: 0.65rem 1.4rem;">Guardar Selección</button>
+        <button id="cmp-btn-save-modal" type="button" class="cmp-btn cmp-btn-accept"
+          style="width: auto; padding: 0.65rem 1.4rem;">Guardar Selección</button>
       </div>
     </div>
   </div>
@@ -494,4 +603,5 @@
   <!-- Script Modular Principal Versionado -->
   <script type="module" src="js/app.js?v=1.0.6"></script>
 </body>
+
 </html>
