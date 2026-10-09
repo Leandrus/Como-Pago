@@ -14,8 +14,10 @@ date_default_timezone_set('America/Caracas');
 ini_set('max_execution_time', 60);
 
 // 2. Seguridad Estricta: Permitir ÚNICAMENTE ejecución por CLI (Hostinger Cron)
+$isCli = (php_sapi_name() === 'cli');
+
 // Se bloquea el 100% del tráfico web/HTTP para evitar ejecuciones externas no deseadas.
-if (php_sapi_name() !== 'cli' && !empty($_SERVER['REMOTE_ADDR'])) {
+if (!$isCli && !empty($_SERVER['REMOTE_ADDR'])) {
     http_response_code(403);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([

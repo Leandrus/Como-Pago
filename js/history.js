@@ -483,3 +483,83 @@ function formatFullDate(dStr) {
   const mIdx = parseInt(parts[1], 10) - 1;
   return `${parseInt(parts[2], 10)} de ${months[mIdx] || ''}, ${parts[0]}`;
 }
+
+/**
+ * Busca las cotizaciones para una fecha concreta YYYY-MM-DD
+ * Si la fecha cae en fin de semana o feriado (sin cotización oficial directa),
+ * devuelve la cotización oficial hábil inmediata anterior que estaba vigente.
+ */
+export function findRateForDate(historyRates, targetDateStr) {
+  if (!Array.isArray(historyRates) || historyRates.length === 0) {
+    return null;
+  }
+
+  // Filtrar registros válidos ordenados cronológicamente
+  const sorted = [...historyRates]
+    .filter(r => r && r.date)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  // 1. Coincidencia exacta con BCV válido
+  const exact = sorted.find(r => r.date === targetDateStr);
+  if (exact && typeof exact.bcv === 'number' && exact.bcv > 0) {
+    return {
+      exact: true,
+      found: true,
+      date: exact.date,
+      bcv: exact.bcv,
+      usdt: typeof exact.usdt === 'number' ? exact.usdt : null,
+      requestedDate: targetDateStr
+    };
+  }
+
+  // 2. Si no hay cotización en esa fecha exacta (fin de semana o feriado),
+  // se aplica la tasa hábil inmediatamente anterior que estaba legalmente vigente
+  const preceding = sorted.filter(r => r.date <= targetDateStr && typeof r.bcv === 'number' && r.bcv > 0).pop();
+  if (preceding) {
+    const usdtVal = (exact && typeof exact.usdt === 'number') ? exact.usdt : (typeof preceding.usdt === 'number' ? preceding.usdt : null);
+    return {
+      exact: false,
+      found: true,
+      date: preceding.date,
+      bcv: preceding.bcv,
+      usdt: usdtVal,
+      requestedDate: targetDateStr,
+      isPreceding: true,
+      note: `Fin de semana o feriado (${targetDateStr}). Se aplicó la cotización oficial vigente del ${preceding.date}.`
+    };
+  }
+
+  // 3. Fallback al primer registro si es anterior a todo el historial
+  const first = sorted.find(r => typeof r.bcv === 'number' && r.bcv > 0);
+  if (first) {
+    return {
+      exact: false,
+      found: true,
+      date: first.date,
+      bcv: first.bcv,
+      usdt: first.usdt,
+      requestedDate: targetDateStr,
+      isFallback: true,
+      note: `La fecha seleccionada es previa al registro inicial (${first.date}).`
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Obtiene el rango de fechas disponibles en el archivo de historial
+ */
+export function getHistoryDateRange(historyRates) {
+  if (!Array.isArray(historyRates) || historyRates.length === 0) {
+    return {
+      min: '2023-01-03',
+      max: new Date().toISOString().substring(0, 10)
+    };
+  }
+  const valid = historyRates.filter(r => r && r.date);
+  return {
+    min: valid[0]?.date || '2023-01-03',
+    max: valid[valid.length - 1]?.date || new Date().toISOString().substring(0, 10)
+  };
+}

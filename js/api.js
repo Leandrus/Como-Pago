@@ -5,6 +5,7 @@
 
 const API_CONFIG = {
   endpoint: 'https://api-dolar.leandrus.net/v1/dolares',
+  endpointNext: 'https://api-dolar.leandrus.net/v1/dolares/oficial/siguiente',
   cacheKey: 'como_pago_api_rates_cache',
   cacheTtlMs: 5 * 60 * 1000, // 5 minutos de validez para caché en memoria
   timeoutMs: 8000,
@@ -123,6 +124,52 @@ export async function getDollarRates() {
 }
 
 /**
+ * Obtiene la cotización oficial BCV asignada para el siguiente día hábil
+ * (disponible tras la publicación del BCV en la tarde, ~4:00 PM - 6:00 PM)
+ */
+export async function getNextBcvRate() {
+  try {
+    const data = await fetchWithRetry(API_CONFIG.endpointNext, {}, 2);
+
+    if (!data || typeof data !== 'object') {
+      throw new Error('Respuesta no válida del servicio');
+    }
+
+    if (data.estado === 'no_disponible') {
+      return {
+        available: false,
+        message: data.mensaje || 'Aún no se ha publicado la cotización oficial para la próxima fecha valor.',
+        currentEffectiveDate: data.fecha_vigente_actual || null
+      };
+    }
+
+    // Si está disponible, la API retorna el objeto de cotización oficial
+    const rate = parseFloat(data.promedio || data.precio || data.venta) || 0;
+    if (rate > 0) {
+      const rateDate = data.fechaActualizacion || data.fechaVigente || data.fecha || null;
+      return {
+        available: true,
+        bcv: rate,
+        date: rateDate,
+        raw: data
+      };
+    }
+
+    return {
+      available: false,
+      message: 'No se encontró un monto de cotización válido en la respuesta.'
+    };
+  } catch (err) {
+    console.warn('Error al consultar próxima tasa BCV:', err);
+    return {
+      available: false,
+      error: err.message,
+      message: 'No se pudo conectar con el servidor para consultar la próxima tasa.'
+    };
+  }
+}
+
+/**
  * Formatea una fecha ISO a formato local venezolano comprensible
  */
 export function formatRateDate(isoDateString) {
@@ -144,4 +191,17 @@ export function formatRateDate(isoDateString) {
   } catch (e) {
     return 'Fecha no disponible';
   }
+}
+
+/**
+ * Formatea una fecha YYYY-MM-DD o ISO a formato legible dd/mm/aaaa
+ */
+export function formatDisplayDate(dateStr) {
+  if (!dateStr) return '';
+  const clean = dateStr.substring(0, 10);
+  const parts = clean.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return dateStr;
 }

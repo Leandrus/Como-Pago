@@ -4,7 +4,7 @@
  * Integración de API, Cálculos, Persistencia y UI
  */
 
-import { getDollarRates, formatRateDate } from './api.js?v=1.1.0';
+import { getDollarRates, getNextBcvRate, formatRateDate, formatDisplayDate } from './api.js?v=1.2.0';
 import { Calculator } from './calculator.js?v=1.1.0';
 import { initPWA } from './pwa.js?v=1.1.0';
 import './consent.js?v=1.1.0';
@@ -13,8 +13,10 @@ import {
   updateLiveRatePoint,
   filterRatesByPeriod,
   calculateMetrics,
-  renderHistoryChart
-} from './history.js?v=1.1.0';
+  renderHistoryChart,
+  findRateForDate,
+  getHistoryDateRange
+} from './history.js?v=1.2.0';
 
 const LS_KEY = 've_payment_calculator_state';
 const DEBOUNCE_TIME = 600;
@@ -28,7 +30,15 @@ const state = {
   saveTimeout: null,
   lastUpdatedIso: null,
   currentHistoryPeriod: '1M',
-  historyLoadedData: null
+  historyLoadedData: null,
+
+  // Estados de control de fecha y modo
+  activeDateMode: 'today', // 'today' | 'next' | 'history'
+  todayLiveBcv: 0,
+  todayLiveUsdt: 0,
+  todayLastUpdatedIso: null,
+  selectedDateStr: null,
+  nextBcvData: null
 };
 
 // Referencias del DOM
@@ -46,6 +56,23 @@ function initDomReferences() {
     rateDiff: document.getElementById('rateDiff'),
     apiTimestamp: document.getElementById('apiTimestamp'),
     
+    // Controles de fecha (Próximo BCV, Selector Fecha, Restaurar Hoy)
+    btnNextBcv: document.getElementById('btnNextBcv'),
+    btnPickDate: document.getElementById('btnPickDate'),
+    btnPickDateLabel: document.getElementById('btnPickDateLabel'),
+    datePickerInput: document.getElementById('datePickerInput'),
+    btnRestoreToday: document.getElementById('btnRestoreToday'),
+    activeDateBanner: document.getElementById('activeDateBanner'),
+    activeDateBannerPill: document.getElementById('activeDateBannerPill'),
+    activeDateBannerMsg: document.getElementById('activeDateBannerMsg'),
+    btnBannerRestore: document.getElementById('btnBannerRestore'),
+
+    // Toast de notificaciones
+    dateNoticeToast: document.getElementById('dateNoticeToast'),
+    dateToastTitle: document.getElementById('dateToastTitle'),
+    dateToastMessage: document.getElementById('dateToastMessage'),
+    dateToastClose: document.getElementById('dateToastClose'),
+
     price_bcv_usd_input: document.getElementById('price_bcv_usd_input'),
     price_bcv_ves_input: document.getElementById('price_bcv_ves_input'),
     price_parallel_usd_input: document.getElementById('price_parallel_usd_input'),
@@ -117,8 +144,14 @@ function loadSavedState() {
       const data = JSON.parse(raw);
       state.lastUpdatedIso = data.lastUpdatedIso || null;
 
-      if (data.bcv > 0) els.bcvDisplay.value = data.bcv.toFixed(2);
-      if (data.usdt > 0) els.usdtDisplay.value = data.usdt.toFixed(2);
+      if (data.bcv > 0) {
+        state.todayLiveBcv = data.bcv;
+        els.bcvDisplay.value = data.bcv.toFixed(2);
+      }
+      if (data.usdt > 0) {
+        state.todayLiveUsdt = data.usdt;
+        els.usdtDisplay.value = data.usdt.toFixed(2);
+      }
 
       if (data.price_bcv_usd > 0) els.price_bcv_usd_input.value = data.price_bcv_usd.toFixed(2);
       // Compatibilidad con versiones anteriores que guardaban price_avg_usd
@@ -158,13 +191,19 @@ async function fetchRates() {
     const data = await getDollarRates();
 
     if (data.bcv > 0) {
-      state.bcv = data.bcv;
-      els.bcvDisplay.value = state.bcv.toFixed(2);
+      state.todayLiveBcv = data.bcv;
+      if (state.activeDateMode === 'today') {
+        state.bcv = data.bcv;
+        els.bcvDisplay.value = state.bcv.toFixed(2);
+      }
     }
 
     if (data.usdt > 0) {
-      state.usdt = data.usdt;
-      els.usdtDisplay.value = state.usdt.toFixed(2);
+      state.todayLiveUsdt = data.usdt;
+      if (state.activeDateMode === 'today') {
+        state.usdt = data.usdt;
+        els.usdtDisplay.value = state.usdt.toFixed(2);
+      }
     }
 
     if (data.bcv > 0 && data.usdt > 0) {
@@ -172,12 +211,25 @@ async function fetchRates() {
     }
 
     if (data.updatedAt) {
-      state.lastUpdatedIso = data.updatedAt;
-      if (els.apiTimestamp) {
-        const sourceLabel = data.isCached ? ' (Caché)' : '';
-        els.apiTimestamp.textContent = `Tasas al: ${formatRateDate(data.updatedAt)}${sourceLabel}`;
+      state.todayLastUpdatedIso = data.updatedAt;
+      if (state.activeDateMode === 'today') {
+        state.lastUpdatedIso = data.updatedAt;
+        if (els.apiTimestamp) {
+          const sourceLabel = data.isCached ? ' (Caché)' : '';
+          els.apiTimestamp.textContent = `Tasas al: ${formatRateDate(data.updatedAt)}${sourceLabel}`;
+        }
       }
     }
+
+    // Inicializar límites de fecha para el selector histórico
+    loadRatesHistory().then(historyData => {
+      if (historyData && Array.isArray(historyData.rates) && els.datePickerInput) {
+        const range = getHistoryDateRange(historyData.rates);
+        els.datePickerInput.min = range.min;
+        els.datePickerInput.max = range.max;
+      }
+    }).catch(() => {});
+
   } catch (err) {
     console.error('Error al actualizar tasas:', err);
   } finally {
@@ -450,6 +502,12 @@ function handleResetAll() {
   els.price_parallel_usd_input.value = '';
   els.price_parallel_ves_input.value = '';
 
+  state.activeDateMode = 'today';
+  state.selectedDateStr = null;
+  if (els.btnPickDateLabel) els.btnPickDateLabel.textContent = 'Elegir Fecha';
+  if (els.datePickerInput) els.datePickerInput.value = '';
+  updateDateModeUI();
+
   fetchRates();
   showInputsView();
 }
@@ -539,11 +597,258 @@ function openLegalModal(type) {
   document.body.style.overflow = 'hidden';
 }
 
-function closeLegalModal() {
-  if (els.legalModal) {
-    els.legalModal.classList.remove('active');
-    document.body.style.overflow = '';
+let toastTimeout = null;
+
+/**
+ * Muestra una notificación toast elegante
+ */
+function showDateToast(title, message, type = 'info') {
+  if (!els.dateNoticeToast) return;
+  clearTimeout(toastTimeout);
+
+  if (els.dateToastTitle) els.dateToastTitle.textContent = title;
+  if (els.dateToastMessage) els.dateToastMessage.textContent = message;
+
+  els.dateNoticeToast.className = `date-toast toast-${type}`;
+
+  toastTimeout = setTimeout(() => {
+    hideDateToast();
+  }, 6500);
+}
+
+function hideDateToast() {
+  clearTimeout(toastTimeout);
+  if (els.dateNoticeToast) {
+    els.dateNoticeToast.classList.add('hidden');
   }
+}
+
+/**
+ * Actualiza la apariencia visual de la barra de fechas y el banner según el modo activo
+ */
+function updateDateModeUI() {
+  if (els.btnNextBcv) {
+    els.btnNextBcv.classList.toggle('active', state.activeDateMode === 'next');
+    els.btnNextBcv.classList.toggle('is-next', state.activeDateMode === 'next');
+  }
+  if (els.btnPickDate) {
+    els.btnPickDate.classList.toggle('active', state.activeDateMode === 'history');
+    els.btnPickDate.classList.toggle('is-history', state.activeDateMode === 'history');
+  }
+  if (els.btnRestoreToday) {
+    els.btnRestoreToday.classList.toggle('active', state.activeDateMode === 'today');
+  }
+
+  if (!els.activeDateBanner) return;
+
+  if (state.activeDateMode === 'today') {
+    els.activeDateBanner.classList.add('hidden');
+    if (els.btnPickDateLabel) els.btnPickDateLabel.textContent = 'Elegir Fecha';
+    if (els.datePickerInput) els.datePickerInput.value = '';
+  } else if (state.activeDateMode === 'next') {
+    els.activeDateBanner.className = 'active-date-banner is-next';
+    if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Próximo BCV';
+    const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : 'Próxima fecha';
+    if (els.activeDateBannerMsg) {
+      els.activeDateBannerMsg.textContent = `Tasa oficial asignada para el ${dateFormatted}`;
+    }
+  } else if (state.activeDateMode === 'history') {
+    els.activeDateBanner.className = 'active-date-banner is-history';
+    if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Histórico';
+    const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : '';
+    if (els.activeDateBannerMsg) {
+      els.activeDateBannerMsg.textContent = `Cotización del ${dateFormatted}`;
+    }
+  }
+}
+
+/**
+ * Consulta y aplica la próxima cotización oficial BCV (día siguiente)
+ */
+async function handleNextBcvClick() {
+  if (els.btnNextBcv) els.btnNextBcv.classList.add('loading');
+  setRateLoaders(true);
+
+  try {
+    const result = await getNextBcvRate();
+
+    if (!result.available) {
+      showDateToast(
+        'Próxima Tasa No Disponible',
+        result.message || 'El BCV aún no ha emitido la tasa para la siguiente fecha valor. Se publica habitualmente entre las 4:00 PM y 6:00 PM en días hábiles bancarios.',
+        'warning'
+      );
+      return;
+    }
+
+    state.nextBcvData = result;
+    state.activeDateMode = 'next';
+    state.selectedDateStr = result.date;
+
+    state.bcv = result.bcv;
+    els.bcvDisplay.value = state.bcv.toFixed(2);
+
+    updateRateDiffDisplay();
+    syncInputs('from_rates');
+    updateDateModeUI();
+
+    if (!els.section2.classList.contains('hidden')) {
+      analyzePayment();
+    }
+
+    const dateFormatted = result.date ? formatDisplayDate(result.date) : 'próximo día hábil';
+    showDateToast(
+      'Próxima Tasa BCV Aplicada',
+      `Se aplicó la cotización oficial de ${result.bcv.toFixed(2)} Bs para el ${dateFormatted}.`,
+      'success'
+    );
+  } catch (err) {
+    showDateToast(
+      'Error de Conexión',
+      'No se pudo verificar la próxima tasa con el servidor.',
+      'warning'
+    );
+  } finally {
+    if (els.btnNextBcv) els.btnNextBcv.classList.remove('loading');
+    setRateLoaders(false);
+  }
+}
+
+/**
+ * Despliega el selector nativo de fechas del navegador
+ */
+async function handlePickDateClick() {
+  if (els.datePickerInput && (!els.datePickerInput.min || !els.datePickerInput.max)) {
+    try {
+      const historyData = await loadRatesHistory();
+      if (historyData && Array.isArray(historyData.rates)) {
+        const range = getHistoryDateRange(historyData.rates);
+        els.datePickerInput.min = range.min;
+        els.datePickerInput.max = range.max;
+      }
+    } catch (_) {}
+  }
+
+  if (!els.datePickerInput) return;
+
+  if (typeof els.datePickerInput.showPicker === 'function') {
+    try {
+      els.datePickerInput.showPicker();
+      return;
+    } catch (_) {}
+  }
+
+  els.datePickerInput.focus();
+  els.datePickerInput.click();
+}
+
+/**
+ * Procesa la fecha seleccionada en el datepicker
+ */
+async function handleDatePickerChange() {
+  if (!els.datePickerInput) return;
+  const chosenDate = els.datePickerInput.value;
+  if (!chosenDate) return;
+  await applyHistoricalDate(chosenDate);
+}
+
+/**
+ * Aplica cotizaciones históricas a partir de una fecha YYYY-MM-DD
+ */
+async function applyHistoricalDate(targetDateStr) {
+  setRateLoaders(true);
+  try {
+    const historyData = await loadRatesHistory();
+    if (!historyData || !Array.isArray(historyData.rates)) {
+      showDateToast('Historial No Disponible', 'No se pudieron cargar los registros históricos.', 'warning');
+      return;
+    }
+
+    const match = findRateForDate(historyData.rates, targetDateStr);
+    if (!match || !match.found || !match.bcv) {
+      showDateToast('Fecha No Encontrada', `No se encontraron cotizaciones para la fecha ${formatDisplayDate(targetDateStr)}.`, 'warning');
+      return;
+    }
+
+    state.activeDateMode = 'history';
+    state.selectedDateStr = match.date;
+
+    state.bcv = match.bcv;
+    els.bcvDisplay.value = state.bcv.toFixed(2);
+
+    if (typeof match.usdt === 'number' && match.usdt > 0) {
+      state.usdt = match.usdt;
+      els.usdtDisplay.value = state.usdt.toFixed(2);
+    }
+
+    if (els.btnPickDateLabel) {
+      els.btnPickDateLabel.textContent = formatDisplayDate(match.date);
+    }
+    if (els.datePickerInput) {
+      els.datePickerInput.value = match.date;
+    }
+
+    updateRateDiffDisplay();
+    syncInputs('from_rates');
+    updateDateModeUI();
+
+    if (!els.section2.classList.contains('hidden')) {
+      analyzePayment();
+    }
+
+    if (match.note) {
+      showDateToast('Fecha Ajustada', match.note, 'warning');
+    } else {
+      showDateToast(
+        'Cotización Histórica Aplicada',
+        `Valores del ${formatDisplayDate(match.date)} aplicados correctamente en pantalla.`,
+        'success'
+      );
+    }
+  } catch (err) {
+    console.error('Error aplicando fecha histórica:', err);
+    showDateToast('Error', 'No se pudo aplicar la fecha seleccionada.', 'warning');
+  } finally {
+    setRateLoaders(false);
+  }
+}
+
+/**
+ * Restaura las tasas vigentes en vivo del día actual (Hoy)
+ */
+function handleRestoreToday() {
+  if (state.todayLiveBcv > 0) {
+    state.bcv = state.todayLiveBcv;
+    els.bcvDisplay.value = state.bcv.toFixed(2);
+  }
+  if (state.todayLiveUsdt > 0) {
+    state.usdt = state.todayLiveUsdt;
+    els.usdtDisplay.value = state.todayLiveUsdt.toFixed(2);
+  }
+
+  state.activeDateMode = 'today';
+  state.selectedDateStr = null;
+
+  if (els.btnPickDateLabel) {
+    els.btnPickDateLabel.textContent = 'Elegir Fecha';
+  }
+  if (els.datePickerInput) {
+    els.datePickerInput.value = '';
+  }
+
+  updateRateDiffDisplay();
+  syncInputs('from_rates');
+  updateDateModeUI();
+
+  if (!els.section2.classList.contains('hidden')) {
+    analyzePayment();
+  }
+
+  showDateToast(
+    'Tasas en Vivo (Hoy)',
+    'Se han restaurado los valores a las cotizaciones oficiales de hoy.',
+    'success'
+  );
 }
 
 /**
@@ -593,6 +898,40 @@ function bindEvents() {
   els.btnCalculate.addEventListener('click', analyzePayment);
   els.btnEdit.addEventListener('click', showInputsView);
   els.btnReset.addEventListener('click', handleResetAll);
+
+  // Controles de fecha (Próximo BCV, Selector de Fecha, Restaurar Hoy)
+  if (els.btnNextBcv) {
+    els.btnNextBcv.addEventListener('click', handleNextBcvClick);
+  }
+  if (els.btnPickDate) {
+    els.btnPickDate.addEventListener('click', handlePickDateClick);
+  }
+  if (els.datePickerInput) {
+    els.datePickerInput.addEventListener('change', handleDatePickerChange);
+  }
+  if (els.btnRestoreToday) {
+    els.btnRestoreToday.addEventListener('click', handleRestoreToday);
+  }
+  if (els.btnBannerRestore) {
+    els.btnBannerRestore.addEventListener('click', handleRestoreToday);
+  }
+  if (els.dateToastClose) {
+    els.dateToastClose.addEventListener('click', hideDateToast);
+  }
+
+  // Clic en fila de la tabla del modal de historial para aplicar esa cotización
+  if (els.recentRecordsBody) {
+    els.recentRecordsBody.addEventListener('click', (e) => {
+      const row = e.target.closest('tr.clickable-row');
+      if (row) {
+        const dateStr = row.getAttribute('data-date');
+        if (dateStr) {
+          applyHistoricalDate(dateStr);
+          closeHistoryModal();
+        }
+      }
+    });
+  }
 
   // Botones para copiar montos en Bolívares
   document.querySelectorAll('.btn-copy-val').forEach(btn => {
@@ -670,6 +1009,7 @@ function bindEvents() {
     if (e.key === 'Escape') {
       closeLegalModal();
       closeHistoryModal();
+      hideDateToast();
       if (window.ConsentManager) window.ConsentManager.hideModal();
     }
   });
@@ -777,8 +1117,13 @@ function populateRecentRecordsTable(records) {
     }
 
     html += `
-      <tr>
-        <td style="font-weight: 500;">${r.date}</td>
+      <tr class="clickable-row" data-date="${r.date}" title="Clic para aplicar cotizaciones del ${r.date} en la calculadora">
+        <td style="font-weight: 500;">
+          <span style="display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>${r.date}</span>
+            <svg style="width: 12px; height: 12px; opacity: 0.45; color: var(--color-primary);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </span>
+        </td>
         <td style="text-align: right; color: var(--color-bcv); font-weight: 600;">${r.bcv ? 'Bs. ' + r.bcv.toFixed(2) : '--'}</td>
         <td style="text-align: right; color: var(--color-usdt); font-weight: 600;">${r.usdt ? 'Bs. ' + r.usdt.toFixed(2) : '--'}</td>
         <td style="text-align: right; color: #38bdf8;">${spreadText}</td>
