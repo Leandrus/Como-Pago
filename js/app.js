@@ -6,7 +6,7 @@
 
 import { getDollarRates, getNextBcvRate, formatRateDate, formatDisplayDate } from './api.js?v=1.2.0';
 import { Calculator } from './calculator.js?v=1.1.0';
-import { initPWA } from './pwa.js?v=1.1.0';
+import { initPWA } from './pwa.js?v=1.2.0';
 import './consent.js?v=1.1.0';
 import {
   loadRatesHistory,
@@ -595,6 +595,15 @@ function openLegalModal(type) {
   els.legalModalContent.innerHTML = doc.html;
   els.legalModal.classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Cierra el modal legal
+ */
+function closeLegalModal() {
+  if (!els.legalModal) return;
+  els.legalModal.classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 let toastTimeout = null;
