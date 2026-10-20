@@ -52,7 +52,7 @@
     rel="stylesheet">
 
   <!-- Estilos Modulares (Vanilla CSS Puro Versionado para Cache-Busting) -->
-  <link rel="stylesheet" href="css/main.css?v=1.2.0">
+  <link rel="stylesheet" href="css/main.css?v=1.3.0">
   <link rel="stylesheet" href="css/consent.css?v=1.1.0">
 
   <!-- Marcado Estructurado JSON-LD (Schema.org) -->
@@ -93,10 +93,6 @@
           <span id="liveStatusText">Tasas en Vivo</span>
         </div>
         <h1 class="app-title">¿Cómo Pago?</h1>
-        <p class="app-description">
-          Compara al instante si te conviene pagar en <strong>Bolívares (Tasa
-            BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
-        </p>
 
         <!-- Guía Desplegable: Casos de Uso y Funcionamiento -->
         <details class="guide-card" id="guideAccordion">
@@ -116,6 +112,10 @@
             </svg>
           </summary>
           <div class="guide-content">
+            <p class="guide-intro">
+              Compara al instante si te conviene pagar en <strong>Bolívares (Tasa
+                BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
+            </p>
             <div class="guide-step">
               <span class="guide-step-num">1</span>
               <div class="guide-step-body">
@@ -155,12 +155,80 @@
         <!-- ============================================== -->
         <section id="section1" class="space-y-4" aria-label="Ingreso de tasas y precios de compra">
 
+          <!-- ============================================== -->
+          <!-- BARRA DE CONTROL DE FECHAS (PRÓXIMO BCV / CALENDARIO / HOY) -->
+          <!-- ============================================== -->
+          <div class="date-toolbar-container" aria-label="Controles de fecha de cotización">
+            <div class="date-toolbar" role="group" aria-label="Selector de fecha de tasas">
+              <!-- Botón 1: Selector de Fecha Específica (Calendario del historial) -->
+              <div class="date-picker-trigger-wrap">
+                <button type="button" id="btnPickDate" class="btn-date-tool"
+                  title="Escoger una fecha concreta en el calendario para aplicar sus valores"
+                  aria-label="Seleccionar fecha concreta en el calendario">
+                  <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="12" cy="15" r="2"></circle>
+                  </svg>
+                  <span class="date-tool-label" id="btnPickDateLabel">Elegir Fecha</span>
+                </button>
+                <input type="date" id="datePickerInput" class="date-picker-native-hidden"
+                  aria-label="Seleccionar fecha de cotización" min="2023-01-03">
+              </div>
+
+              <!-- Botón 2: Restaurar / Aplicar al Día Actual (Hoy) -->
+              <button type="button" id="btnRestoreToday" class="btn-date-tool active"
+                title="Restaurar y aplicar tasas al día actual (Hoy)" aria-label="Restaurar a tasas de hoy">
+                <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                  <path d="M21 3v5h-5"></path>
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                  <path d="M8 16H3v5"></path>
+                </svg>
+                <span class="date-tool-label">Hoy</span>
+              </button>
+
+              <!-- Botón 3: Próximo BCV (Tasa del día siguiente si está disponible) -->
+              <button type="button" id="btnNextBcv" class="btn-date-tool"
+                title="Visualizar la próxima tasa oficial BCV (mañana o siguiente día hábil)"
+                aria-label="Ver tasa BCV del día siguiente">
+                <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                  <path d="M12 14l3 3-3 3"></path>
+                  <line x1="9" y1="17" x2="15" y2="17"></line>
+                </svg>
+                <span class="date-tool-label">Próximo BCV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botón Desplegable para Historial y Fluctuación -->
+          <div class="history-trigger-container">
+            <button type="button" id="btnOpenHistory" class="btn-history-trigger"
+              aria-label="Ver historial de tasas y gráfico de fluctuación">
+              <svg class="history-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              <span>Ver Historial</span>
+              <span class="history-badge">1S • 1M • 3M • 1A</span>
+            </button>
+          </div>
+
           <!-- Tarjetas de Tasas Principales -->
           <div class="rates-grid">
             <!-- Tasa BCV Oficial (Verde) -->
             <article class="rate-card bcv">
               <div class="rate-header">
-                <span class="rate-label bcv">Tasa Oficial (BCV)</span>
+                <span class="rate-label bcv">Tasa Oficial</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -178,7 +246,7 @@
             <!-- Tasa USDT / Binance Paralelo (Ámbar) -->
             <article class="rate-card usdt">
               <div class="rate-header">
-                <span class="rate-label usdt">Dólar (Efectivo/USDT)</span>
+                <span class="rate-label usdt">Tasa Binance</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="edit-icon" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -204,87 +272,6 @@
             </div>
           </div>
 
-          <!-- ============================================== -->
-          <!-- BARRA DE CONTROL DE FECHAS (PRÓXIMO BCV / CALENDARIO / HOY) -->
-          <!-- ============================================== -->
-          <div class="date-toolbar-container" aria-label="Controles de fecha de cotización">
-            <div class="date-toolbar" role="group" aria-label="Selector de fecha de tasas">
-              <!-- Botón 1: Próximo BCV (Tasa del día siguiente si está disponible) -->
-              <button type="button" id="btnNextBcv" class="btn-date-tool"
-                title="Visualizar la próxima tasa oficial BCV (mañana o siguiente día hábil)"
-                aria-label="Ver tasa BCV del día siguiente">
-                <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                  <path d="M12 14l3 3-3 3"></path>
-                  <line x1="9" y1="17" x2="15" y2="17"></line>
-                </svg>
-                <span class="date-tool-label">Próximo BCV</span>
-              </button>
-
-              <!-- Botón 2: Selector de Fecha Específica (Calendario del historial) -->
-              <div class="date-picker-trigger-wrap">
-                <button type="button" id="btnPickDate" class="btn-date-tool"
-                  title="Escoger una fecha concreta en el calendario para aplicar sus valores"
-                  aria-label="Seleccionar fecha concreta en el calendario">
-                  <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                    <circle cx="12" cy="15" r="2"></circle>
-                  </svg>
-                  <span class="date-tool-label" id="btnPickDateLabel">Elegir Fecha</span>
-                </button>
-                <input type="date" id="datePickerInput" class="date-picker-native-hidden"
-                  aria-label="Seleccionar fecha de cotización" min="2023-01-03">
-              </div>
-
-              <!-- Botón 3: Restaurar / Aplicar al Día Actual (Hoy) -->
-              <button type="button" id="btnRestoreToday" class="btn-date-tool active"
-                title="Restaurar y aplicar tasas al día actual (Hoy)"
-                aria-label="Restaurar a tasas de hoy">
-                <svg class="date-tool-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                  <path d="M21 3v5h-5"></path>
-                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                  <path d="M8 16H3v5"></path>
-                </svg>
-                <span class="date-tool-label">Hoy</span>
-              </button>
-            </div>
-
-            <!-- Banner Informativo de Modo de Fecha Activo (cuando no es hoy) -->
-            <div id="activeDateBanner" class="active-date-banner hidden" role="status" aria-live="polite">
-              <div class="active-date-banner-body">
-                <span class="active-date-pill" id="activeDateBannerPill">Próximo BCV</span>
-                <span class="active-date-msg" id="activeDateBannerMsg">Aplicando tasa para el día de mañana</span>
-              </div>
-              <button type="button" id="btnBannerRestore" class="btn-banner-restore"
-                title="Volver a las tasas de hoy" aria-label="Restaurar a tasas de hoy">
-                Restaurar Hoy ✕
-              </button>
-            </div>
-          </div>
-
-          <!-- Botón Desplegable para Historial y Fluctuación -->
-          <div class="history-trigger-container">
-            <button type="button" id="btnOpenHistory" class="btn-history-trigger"
-              aria-label="Ver historial de tasas y gráfico de fluctuación">
-              <svg class="history-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-              </svg>
-              <span>Ver Historial y Fluctuación</span>
-              <span class="history-badge">1S • 1M • 3M • 1A</span>
-            </button>
-          </div>
-
           <hr class="separator">
 
           <!-- Ofertas Comparativas (Conversión BCV vs Dólares) -->
@@ -301,8 +288,16 @@
               </label>
               <div class="offer-dual-inputs">
                 <div class="input-with-icon" title="Monto en Dólares ($)">
+                  <button type="button" class="btn-clear-val" id="btnClearOffer1" data-clear="offer1"
+                    title="Limpiar montos de Opción 1" aria-label="Limpiar montos de Opción 1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
                   <span class="input-prefix" style="color: #34d399;">$</span>
-                  <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv"
+                  <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv has-clear"
                     placeholder="0.00" aria-label="Monto en dólares a tasa oficial">
                 </div>
                 <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
@@ -338,9 +333,18 @@
               </label>
               <div class="offer-dual-inputs">
                 <div class="input-with-icon" title="Monto en Dólares ($)">
+                  <button type="button" class="btn-clear-val" id="btnClearOffer2" data-clear="offer2"
+                    title="Limpiar montos de Opción 2" aria-label="Limpiar montos de Opción 2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
                   <span class="input-prefix" style="color: #fcd34d;">$</span>
-                  <input type="number" step="any" id="price_parallel_usd_input" class="input-control input-usd-avg"
-                    placeholder="0.00" aria-label="Monto en dólares en efectivo o USDT">
+                  <input type="number" step="any" id="price_parallel_usd_input"
+                    class="input-control input-usd-avg has-clear" placeholder="0.00"
+                    aria-label="Monto en dólares en efectivo o USDT">
                 </div>
                 <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
                   <input type="number" step="any" id="price_parallel_ves_input" class="input-control input-ves"
@@ -674,8 +678,8 @@
   <div id="dateNoticeToast" class="date-toast hidden" role="status" aria-live="polite">
     <div class="date-toast-content">
       <div class="date-toast-icon-wrap" id="dateToastIconWrap">
-        <svg id="dateToastIcon" class="date-toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="dateToastIcon" class="date-toast-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>

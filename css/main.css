@@ -175,7 +175,7 @@ input[type="number"] {
   background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.45rem;
 }
 
 .app-description {
@@ -412,6 +412,15 @@ input[type="number"] {
   gap: 0.65rem;
 }
 
+.guide-intro {
+  font-size: 0.79rem;
+  color: #e2e8f0;
+  line-height: 1.45;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.15rem;
+}
+
 .guide-step {
   display: flex;
   align-items: flex-start;
@@ -483,8 +492,9 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.55rem;
-  margin-top: 0.5rem;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  margin-bottom: 0.1rem;
   width: 100%;
 }
 
@@ -529,25 +539,68 @@ input[type="number"] {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Animaciones de Glow Pulsante Infinito para botón activo en Barra de Fechas */
+@keyframes pulseGlowBlue {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4), 0 0 14px rgba(59, 130, 246, 0.2);
+    border-color: rgba(96, 165, 250, 0.65);
+    background: rgba(59, 130, 246, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.85), 0 0 28px rgba(59, 130, 246, 0.45);
+    border-color: rgba(147, 197, 253, 0.95);
+    background: rgba(59, 130, 246, 0.28);
+  }
+}
+
+@keyframes pulseGlowGreen {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4), 0 0 14px rgba(16, 185, 129, 0.2);
+    border-color: rgba(52, 211, 153, 0.65);
+    background: rgba(16, 185, 129, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.85), 0 0 28px rgba(16, 185, 129, 0.45);
+    border-color: rgba(110, 231, 183, 0.95);
+    background: rgba(16, 185, 129, 0.28);
+  }
+}
+
+@keyframes pulseGlowAmber {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4), 0 0 14px rgba(245, 158, 11, 0.2);
+    border-color: rgba(251, 191, 36, 0.65);
+    background: rgba(245, 158, 11, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.85), 0 0 28px rgba(245, 158, 11, 0.45);
+    border-color: rgba(253, 230, 138, 0.95);
+    background: rgba(245, 158, 11, 0.28);
+  }
+}
+
 .btn-date-tool.active {
-  background: rgba(59, 130, 246, 0.18);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #60a5fa;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+  animation: pulseGlowBlue 2.2s infinite ease-in-out;
 }
 
 .btn-date-tool.is-next.active {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #34d399;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+  animation: pulseGlowGreen 2.2s infinite ease-in-out;
 }
 
 .btn-date-tool.is-history.active {
-  background: rgba(245, 158, 11, 0.18);
-  border-color: rgba(245, 158, 11, 0.5);
-  color: #fbbf24;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+  color: #fde68a;
+  animation: pulseGlowAmber 2.2s infinite ease-in-out;
 }
 
 .date-tool-icon {
@@ -588,95 +641,7 @@ input[type="number"] {
   z-index: 1;
 }
 
-/* Banner Informativo de Fecha Activa */
-.active-date-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  width: 100%;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(19, 27, 46, 0.95) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  border-radius: var(--radius-md);
-  padding: 0.45rem 0.75rem;
-  font-size: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  animation: fadeInDown 0.25s ease-out;
-}
 
-.active-date-banner.hidden {
-  display: none !important;
-}
-
-.active-date-banner.is-next {
-  border-color: rgba(16, 185, 129, 0.45);
-  background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(19, 27, 46, 0.95) 100%);
-}
-
-.active-date-banner.is-history {
-  border-color: rgba(245, 158, 11, 0.45);
-  background: linear-gradient(135deg, rgba(120, 53, 15, 0.35) 0%, rgba(19, 27, 46, 0.95) 100%);
-}
-
-.active-date-banner-body {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.active-date-pill {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.15rem 0.45rem;
-  border-radius: var(--radius-sm);
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
-.active-date-banner.is-next .active-date-pill {
-  background: rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
-  border-color: rgba(16, 185, 129, 0.35);
-}
-
-.active-date-banner.is-history .active-date-pill {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fde68a;
-  border-color: rgba(245, 158, 11, 0.35);
-}
-
-.active-date-msg {
-  color: var(--text-main);
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.btn-banner-restore {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-main);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.22rem 0.55rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all var(--transition-fast);
-}
-
-.btn-banner-restore:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-}
 
 /* Toast de Notificaciones Flotante */
 .date-toast {
@@ -883,6 +848,46 @@ input[type="number"] {
   font-size: 1.05rem;
 }
 
+.offer-dual-inputs .input-prefix {
+  left: 2.2rem;
+}
+
+.offer-dual-inputs .input-control.has-clear {
+  padding-left: 3.5rem;
+  padding-right: 1rem;
+}
+
+.btn-clear-val {
+  position: absolute;
+  left: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-dim);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  z-index: 3;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+.btn-clear-val:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.btn-clear-val:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
 .offer-dual-inputs .input-usd-bcv {
   color: #34d399;
 }
@@ -892,9 +897,9 @@ input[type="number"] {
 }
 
 .offer-dual-inputs .input-ves {
-  padding-right: 3.5rem !important;
+  padding-right: 4.5rem !important;
   text-align: center;
-  padding-left: 0.5rem;
+  padding-left: 1rem;
 }
 
 .input-suffix-actions {
@@ -1408,7 +1413,7 @@ input[type="number"] {
 .history-trigger-container {
   display: flex;
   justify-content: center;
-  margin: 0.6rem 0.6rem;
+  margin: 0.25rem 0 0.6rem;
 }
 
 .btn-history-trigger {
@@ -1452,22 +1457,73 @@ input[type="number"] {
   letter-spacing: 0.02em;
 }
 
-/* Modal de Historial */
-.history-modal-dialog {
-  max-width: 640px;
+/* Modal de Historial en Pantalla Completa (Full Width & Height) */
+#historyModal {
+  padding: 0;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.history-modal-header-title {
+#historyModal .history-modal-dialog {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-main);
+  box-shadow: none;
+  transform: none;
+}
+
+#historyModal.active .history-modal-dialog {
+  transform: none;
+}
+
+#historyModal .modal-header {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+#historyModal .history-modal-header-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.history-modal-body {
-  padding: 1.25rem;
+#historyModal .history-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  max-width: 1050px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3.5rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
+}
+
+@media (min-width: 768px) {
+  #historyModal .modal-header {
+    padding: 1rem 2rem;
+  }
+
+  #historyModal .history-modal-body {
+    padding: 1.75rem 2rem 4rem;
+  }
 }
 
 /* Selector de Períodos */

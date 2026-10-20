@@ -77,6 +77,8 @@ function initDomReferences() {
     price_bcv_ves_input: document.getElementById('price_bcv_ves_input'),
     price_parallel_usd_input: document.getElementById('price_parallel_usd_input'),
     price_parallel_ves_input: document.getElementById('price_parallel_ves_input'),
+    btnClearOffer1: document.getElementById('btnClearOffer1'),
+    btnClearOffer2: document.getElementById('btnClearOffer2'),
     
     recommendationBox: document.getElementById('recommendationBox'),
     finalVerdict: document.getElementById('finalVerdict'),
@@ -648,26 +650,46 @@ function updateDateModeUI() {
     els.btnRestoreToday.classList.toggle('active', state.activeDateMode === 'today');
   }
 
-  if (!els.activeDateBanner) return;
-
   if (state.activeDateMode === 'today') {
-    els.activeDateBanner.classList.add('hidden');
+    if (els.activeDateBanner) els.activeDateBanner.classList.add('hidden');
     if (els.btnPickDateLabel) els.btnPickDateLabel.textContent = 'Elegir Fecha';
     if (els.datePickerInput) els.datePickerInput.value = '';
   } else if (state.activeDateMode === 'next') {
-    els.activeDateBanner.className = 'active-date-banner is-next';
-    if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Próximo BCV';
-    const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : 'Próxima fecha';
-    if (els.activeDateBannerMsg) {
-      els.activeDateBannerMsg.textContent = `Tasa oficial asignada para el ${dateFormatted}`;
+    if (els.activeDateBanner) {
+      els.activeDateBanner.className = 'active-date-banner is-next';
+      if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Próximo BCV';
+      const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : 'Próxima fecha';
+      if (els.activeDateBannerMsg) {
+        els.activeDateBannerMsg.textContent = `Tasa oficial asignada para el ${dateFormatted}`;
+      }
     }
   } else if (state.activeDateMode === 'history') {
-    els.activeDateBanner.className = 'active-date-banner is-history';
-    if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Histórico';
-    const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : '';
-    if (els.activeDateBannerMsg) {
-      els.activeDateBannerMsg.textContent = `Cotización del ${dateFormatted}`;
+    if (els.activeDateBanner) {
+      els.activeDateBanner.className = 'active-date-banner is-history';
+      if (els.activeDateBannerPill) els.activeDateBannerPill.textContent = 'Histórico';
+      const dateFormatted = state.selectedDateStr ? formatDisplayDate(state.selectedDateStr) : '';
+      if (els.activeDateBannerMsg) {
+        els.activeDateBannerMsg.textContent = `Cotización del ${dateFormatted}`;
+      }
     }
+  }
+}
+
+/**
+ * Limpia los valores de una opción específica (Dólares y Bolívares)
+ * @param {1 | 2} offerNumber Número de la opción a limpiar
+ */
+function clearOffer(offerNumber) {
+  if (offerNumber === 1) {
+    if (els.price_bcv_usd_input) els.price_bcv_usd_input.value = '';
+    if (els.price_bcv_ves_input) els.price_bcv_ves_input.value = '';
+    saveState();
+    if (els.price_bcv_usd_input) els.price_bcv_usd_input.focus();
+  } else if (offerNumber === 2) {
+    if (els.price_parallel_usd_input) els.price_parallel_usd_input.value = '';
+    if (els.price_parallel_ves_input) els.price_parallel_ves_input.value = '';
+    saveState();
+    if (els.price_parallel_usd_input) els.price_parallel_usd_input.focus();
   }
 }
 
@@ -926,6 +948,20 @@ function bindEvents() {
   }
   if (els.dateToastClose) {
     els.dateToastClose.addEventListener('click', hideDateToast);
+  }
+
+  // Botones para limpiar datos de montos en dólares y bolívares
+  if (els.btnClearOffer1) {
+    els.btnClearOffer1.addEventListener('click', (e) => {
+      e.preventDefault();
+      clearOffer(1);
+    });
+  }
+  if (els.btnClearOffer2) {
+    els.btnClearOffer2.addEventListener('click', (e) => {
+      e.preventDefault();
+      clearOffer(2);
+    });
   }
 
   // Clic en fila de la tabla del modal de historial para aplicar esa cotización
