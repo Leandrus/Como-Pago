@@ -1,16 +1,16 @@
 /**
  * Service Worker para Soporte Offline, PWA y Web Push Nativo
  * ¿Cómo Pago en Venezuela?
- * Versión 1.3.2
+ * Versión 1.3.3
  */
 
-const CACHE_NAME = 'como-pago-v1.3.2';
+const CACHE_NAME = 'como-pago-v1.3.3';
 
 const STATIC_ASSETS = [
   './',
-  './index.html?v=1.3.2',
-  './css/main.css?v=1.3.2',
-  './css/consent.css?v=1.1.0',
+  './index.html?v=1.3.3',
+  './css/main.css?v=1.3.3',
+  './css/consent.css?v=1.3.3',
   './css/legal.css?v=1.2.0',
   './js/app.js?v=1.3.1',
   './js/api.js?v=1.3.0',
@@ -187,7 +187,7 @@ self.addEventListener('fetch', (event) => {
           return caches.match(request).then((cachedResponse) => {
             if (cachedResponse) return cachedResponse;
             if (request.destination === 'document') {
-              return caches.match('./index.html?v=1.3.2') || caches.match('./');
+              return caches.match('./index.html?v=1.3.3') || caches.match('./');
             }
           });
         })
