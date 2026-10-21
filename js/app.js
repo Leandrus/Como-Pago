@@ -4,9 +4,10 @@
  * Integración de API, Cálculos, Persistencia y UI
  */
 
-import { getDollarRates, getNextBcvRate, formatRateDate, formatDisplayDate } from './api.js?v=1.2.0';
+import { getDollarRates, getNextBcvRate, formatRateDate, formatDisplayDate } from './api.js?v=1.3.0';
 import { Calculator } from './calculator.js?v=1.1.0';
-import { initPWA } from './pwa.js?v=1.2.0';
+import { initPWA } from './pwa.js?v=1.3.0';
+import { initPushUI } from './push.js?v=1.3.1';
 import './consent.js?v=1.1.0';
 import {
   loadRatesHistory,
@@ -16,7 +17,7 @@ import {
   renderHistoryChart,
   findRateForDate,
   getHistoryDateRange
-} from './history.js?v=1.2.0';
+} from './history.js?v=1.3.0';
 
 const LS_KEY = 've_payment_calculator_state';
 const DEBOUNCE_TIME = 600;
@@ -1049,12 +1050,27 @@ function bindEvents() {
     });
   }
 
+  // Enlace en footer para abrir modal de alertas
+  const footerBtnAlerts = document.getElementById('footerBtnAlerts');
+  const btnOpenAlerts = document.getElementById('btnOpenAlerts');
+  if (footerBtnAlerts && btnOpenAlerts) {
+    footerBtnAlerts.addEventListener('click', (e) => {
+      e.preventDefault();
+      btnOpenAlerts.click();
+    });
+  }
+
   // Tecla Esc para cerrar cualquier modal
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeLegalModal();
       closeHistoryModal();
       hideDateToast();
+      const alertsModal = document.getElementById('alertsModal');
+      if (alertsModal && alertsModal.classList.contains('active')) {
+        alertsModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
       if (window.ConsentManager) window.ConsentManager.hideModal();
     }
   });
@@ -1185,6 +1201,7 @@ function populateRecentRecordsTable(records) {
 document.addEventListener('DOMContentLoaded', () => {
   initDomReferences();
   initPWA();
+  initPushUI();
   bindEvents();
 
   const hasData = loadSavedState();

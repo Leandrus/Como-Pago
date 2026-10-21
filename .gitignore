@@ -23,3 +23,7 @@ yarn-error.log*
 .gemini/
 .agents/
 scratch/
+
+# Datos privados de Web Push (Llaves VAPID, Suscripciones y Estados)
+push/data/*.json
+

@@ -4,7 +4,7 @@
  * ¿Cómo Pago en Venezuela?
  */
 
-const SW_VERSION = '1.2.0';
+const SW_VERSION = '1.3.0';
 
 export function initPWA() {
   if ('serviceWorker' in navigator) {

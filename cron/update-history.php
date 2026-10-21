@@ -212,6 +212,21 @@ if ($bytesWritten === false) {
     exit(1);
 }
 
+// 9.5. Evaluación y Despacho de Alertas Web Push (Nativo)
+$pushSummary = null;
+try {
+    $engineFile = __DIR__ . '/../push/check_alerts_engine.php';
+    if (file_exists($engineFile)) {
+        require_once $engineFile;
+        $alertEngine = new AlertEngine();
+        $pushSummary = $alertEngine->checkAndDispatch($bcvRate, $usdtRate);
+    }
+} catch (Throwable $pe) {
+    if ($isCli) {
+        fwrite(STDERR, "[AVISO] Error al procesar alertas Web Push: " . $pe->getMessage() . "\n");
+    }
+}
+
 // 10. Salida Exitosa
 $result = [
     'success' => true,
@@ -221,13 +236,17 @@ $result = [
         'bcv' => $bcvRate,
         'usdt' => $usdtRate
     ],
+    'pushAlerts' => $pushSummary,
     'totalRecords' => count($finalRatesList),
     'fileSizeBytes' => $bytesWritten,
     'timestamp' => date('Y-m-d H:i:s T')
 ];
 
 if ($isCli) {
-    echo "[SUCCESS] Acción: {$action} | Fecha: {$rateDate} | BCV: {$bcvRate} | USDT: {$usdtRate} | Total: " . count($finalRatesList) . " registros\n";
+    $bcvAlerts = $pushSummary['bcvAlertsSent'] ?? 0;
+    $usdtAlerts = $pushSummary['usdtAlertsSent'] ?? 0;
+    echo "[SUCCESS] Acción: {$action} | Fecha: {$rateDate} | BCV: {$bcvRate} | USDT: {$usdtRate} | Alertas Push (BCV: {$bcvAlerts}, USDT: {$usdtAlerts}) | Total: " . count($finalRatesList) . " registros\n";
 } else {
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 }
+

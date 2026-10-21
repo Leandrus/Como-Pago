@@ -1,23 +1,24 @@
 /**
- * Service Worker para Soporte Offline y PWA
+ * Service Worker para Soporte Offline, PWA y Web Push Nativo
  * ¿Cómo Pago en Venezuela?
- * Versión 1.2.0
+ * Versión 1.3.1
  */
 
-const CACHE_NAME = 'como-pago-v1.2.0';
+const CACHE_NAME = 'como-pago-v1.3.1';
 
 const STATIC_ASSETS = [
   './',
-  './index.html?v=1.2.0',
-  './css/main.css?v=1.2.0',
+  './index.html?v=1.3.0',
+  './css/main.css?v=1.3.0',
   './css/consent.css?v=1.1.0',
   './css/legal.css?v=1.2.0',
-  './js/app.js?v=1.2.0',
-  './js/api.js?v=1.2.0',
+  './js/app.js?v=1.3.1',
+  './js/api.js?v=1.3.0',
+  './js/push.js?v=1.3.1',
   './js/calculator.js?v=1.1.0',
   './js/consent.js?v=1.1.0',
-  './js/history.js?v=1.2.0',
-  './js/pwa.js?v=1.2.0',
+  './js/history.js?v=1.3.0',
+  './js/pwa.js?v=1.3.0',
   './data/rates-history.json',
   './manifest.json',
   './site.webmanifest',
@@ -36,7 +37,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Precaché v1.2.0 completado');
+      console.log('[SW] Precaché v1.3.0 completado');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -65,15 +66,73 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Estrategia de Fetch:
-// 1. API: Network-First con fallback a caché
-// 2. CSS, JS, HTML: Network-First para garantizar que cualquier cambio se vea de inmediato
-// 3. Imágenes y fuentes: Cache-First
+// ==============================================================================
+// GESTOR DE NOTIFICACIONES WEB PUSH NATIVAS
+// ==============================================================================
+
+self.addEventListener('push', (event) => {
+  let data = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = {
+        title: '¿Cómo Pago en Venezuela?',
+        body: event.data.text()
+      };
+    }
+  }
+
+  const title = data.title || '¿Cómo Pago en Venezuela?';
+  const options = {
+    body: data.body || 'Nueva actualización de cotizaciones disponible.',
+    icon: data.icon || './icons/icon-192x192.png',
+    badge: data.badge || './icons/icon-192x192.png',
+    tag: data.tag || ('como-pago-' + Date.now()),
+    renotify: true,
+    data: {
+      url: data.url || './',
+      timestamp: Date.now()
+    },
+    vibrate: [200, 100, 200]
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : './';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(self.registration.scope) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
+
+// ==============================================================================
+// ESTRATEGIA DE FETCH
+// ==============================================================================
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const requestUrl = new URL(request.url);
 
-  // Peticiones a api-dolar.leandrus.net
+  // 1. API Push interna: Siempre Network directo sin caché
+  if (requestUrl.pathname.includes('/push/api.php') || requestUrl.pathname.endsWith('api.php')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // 2. Peticiones a api-dolar.leandrus.net
   if (requestUrl.hostname.includes('api-dolar.leandrus.net')) {
     event.respondWith(
       fetch(request)
@@ -89,7 +148,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Fuentes Google Fonts: Cache-First
+  // 3. Fuentes Google Fonts: Cache-First
   if (requestUrl.hostname.includes('fonts.googleapis.com') || requestUrl.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
@@ -104,7 +163,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Archivos CSS, JS y Documentos HTML: Network-First (fuerza descarga fresca siempre que haya red)
+  // 4. Archivos CSS, JS y Documentos HTML: Network-First (fuerza descarga fresca siempre que haya red)
   const isCodeOrDoc = 
     request.destination === 'style' ||
     request.destination === 'script' ||
@@ -128,7 +187,7 @@ self.addEventListener('fetch', (event) => {
           return caches.match(request).then((cachedResponse) => {
             if (cachedResponse) return cachedResponse;
             if (request.destination === 'document') {
-              return caches.match('./index.html?v=1.2.0') || caches.match('./');
+              return caches.match('./index.html?v=1.3.0') || caches.match('./');
             }
           });
         })
@@ -136,7 +195,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Resto de activos (imágenes, iconos): Cache-First
+  // 5. Resto de activos (imágenes, iconos): Cache-First
   event.respondWith(
     caches.match(request).then((cached) => {
       return cached || fetch(request).then((networkResponse) => {
