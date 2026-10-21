@@ -41,34 +41,105 @@ class WebPush {
     }
 
     /**
-     * Obtiene o genera las llaves VAPID (Curva P-256 / prime256v1)
+     * Carga variables de entorno desde un archivo .env si existe (raíz del proyecto o carpeta push)
+     */
+    private function loadEnv(): void {
+        $candidatePaths = [
+            dirname(__DIR__, 3) . '/.env', // Por encima de public_html (si está en subcarpeta)
+            dirname(__DIR__, 2) . '/.env', // Por encima de public_html (/home/usuario/.env)
+            dirname(__DIR__) . '/.env',    // Raíz del proyecto
+            __DIR__ . '/.env'              // Carpeta push/
+        ];
+
+        foreach ($candidatePaths as $path) {
+            if (file_exists($path) && is_readable($path)) {
+                $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    if ($line === '' || str_starts_with($line, '#')) continue;
+                    if (str_contains($line, '=')) {
+                        [$k, $v] = explode('=', $line, 2);
+                        $k = trim($k);
+                        $v = trim($v, " \t\n\r\0\x0B\"'");
+                        if (!isset($_ENV[$k])) {
+                            $_ENV[$k] = $v;
+                            putenv("$k=$v");
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Reconstruye un PEM SEC1 válido a partir de las claves públicas y privadas en formato Base64URL
+     */
+    public static function buildPemFromRaw(string $pubBase64, string $privBase64): string {
+        $pub = self::base64UrlDecode($pubBase64);
+        $priv = self::base64UrlDecode($privBase64);
+        $der = hex2bin('30770201010420') . $priv . hex2bin('a00a06082a8648ce3d030107a144034200') . $pub;
+        return "-----BEGIN EC PRIVATE KEY-----\n" . chunk_split(base64_encode($der), 64, "\n") . "-----END EC PRIVATE KEY-----\n";
+    }
+
+    /**
+     * Obtiene o asegura las llaves VAPID (prioridad: .env -> push/data/vapid_keys.json -> auto-generación)
      */
     public function getVapidKeys(): array {
+        $this->loadEnv();
+
+        $envPub = $_ENV['VAPID_PUBLIC_KEY'] ?? getenv('VAPID_PUBLIC_KEY');
+        $envPriv = $_ENV['VAPID_PRIVATE_KEY'] ?? getenv('VAPID_PRIVATE_KEY');
+
+        // 1. Prioridad: Variables en archivo .env o entorno del servidor
+        if (!empty($envPub) && !empty($envPriv)) {
+            $envPem = $_ENV['VAPID_PRIVATE_KEY_PEM'] ?? getenv('VAPID_PRIVATE_KEY_PEM');
+            if (empty($envPem)) {
+                $envPem = self::buildPemFromRaw($envPub, $envPriv);
+            }
+            return [
+                'publicKey' => $envPub,
+                'privateKey' => $envPriv,
+                'privateKeyPem' => $envPem,
+                'source' => 'env'
+            ];
+        }
+
+        // 2. Archivo persistente en disco (push/data/vapid_keys.json)
         if (file_exists($this->keysFile)) {
-            $content = file_get_contents($this->keysFile);
+            $content = @file_get_contents($this->keysFile);
             $keys = json_decode($content, true);
             if (is_array($keys) && !empty($keys['publicKey']) && !empty($keys['privateKeyPem'])) {
+                $keys['source'] = 'file';
                 return $keys;
             }
         }
 
-        // Generar nuevo par de claves P-256
+        // 3. Si no existe ninguno, auto-generar con OpenSSL y guardar localmente
         $cnfPath = __DIR__ . '/openssl.cnf';
         if (!file_exists($cnfPath)) {
-            @file_put_contents($cnfPath, "# minimal openssl config\n");
+            @file_put_contents($cnfPath, "[req]\ndistinguished_name = req_distinguished_name\n[req_distinguished_name]\n");
         }
 
-        $res = openssl_pkey_new([
-            'config' => $cnfPath,
+        $realCnf = realpath($cnfPath) ?: $cnfPath;
+        while (openssl_error_string()) {}
+        $res = @openssl_pkey_new([
+            'config' => $realCnf,
             'curve_name' => 'prime256v1',
             'private_key_type' => OPENSSL_KEYTYPE_EC
         ]);
+        if (!$res) {
+            $res = openssl_pkey_new([
+                'curve_name' => 'prime256v1',
+                'private_key_type' => OPENSSL_KEYTYPE_EC
+            ]);
+        }
 
         if (!$res) {
             throw new RuntimeException('No se pudo generar el par de claves VAPID EC: ' . openssl_error_string());
         }
 
-        openssl_pkey_export($res, $privKeyPem, null, ['config' => $cnfPath]);
+        openssl_pkey_export($res, $privKeyPem, null, ['config' => $realCnf]);
         $details = openssl_pkey_get_details($res);
         $rawPub = "\x04" . $details['ec']['x'] . $details['ec']['y'];
         $rawPriv = $details['ec']['d'];
@@ -77,10 +148,11 @@ class WebPush {
             'publicKey' => self::base64UrlEncode($rawPub),
             'privateKey' => self::base64UrlEncode($rawPriv),
             'privateKeyPem' => $privKeyPem,
-            'createdAt' => date('c')
+            'createdAt' => date('c'),
+            'source' => 'generated'
         ];
 
-        file_put_contents($this->keysFile, json_encode($keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
+        @file_put_contents($this->keysFile, json_encode($keys, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
         @chmod($this->keysFile, 0600);
 
         return $keys;
@@ -151,15 +223,26 @@ class WebPush {
 
         $cnfPath = __DIR__ . '/openssl.cnf';
         if (!file_exists($cnfPath)) {
-            @file_put_contents($cnfPath, "# minimal openssl config\n");
+            @file_put_contents($cnfPath, "[req]\ndistinguished_name = req_distinguished_name\n[req_distinguished_name]\n");
         }
 
         // 1. Clave efímera del servidor
-        $serverKey = openssl_pkey_new([
-            'config' => $cnfPath,
+        $realCnf = realpath($cnfPath) ?: $cnfPath;
+        while (openssl_error_string()) {} // Limpiar errores residuales
+        $serverKey = @openssl_pkey_new([
+            'config' => $realCnf,
             'curve_name' => 'prime256v1',
             'private_key_type' => OPENSSL_KEYTYPE_EC
         ]);
+        if (!$serverKey) {
+            $serverKey = openssl_pkey_new([
+                'curve_name' => 'prime256v1',
+                'private_key_type' => OPENSSL_KEYTYPE_EC
+            ]);
+        }
+        if (!$serverKey) {
+            throw new RuntimeException('No se pudo generar clave efímera para cifrado WebPush: ' . openssl_error_string());
+        }
         $serverDetails = openssl_pkey_get_details($serverKey);
         $serverPub = "\x04" . $serverDetails['ec']['x'] . $serverDetails['ec']['y'];
 

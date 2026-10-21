@@ -1,1 +1,5 @@
-# minimal openssl config
+# OpenSSL Minimal Config for EC Keys
+[req]
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]

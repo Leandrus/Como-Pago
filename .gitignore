@@ -27,3 +27,4 @@ scratch/
 # Datos privados de Web Push (Llaves VAPID, Suscripciones y Estados)
 push/data/*.json
 
+
