@@ -89,14 +89,16 @@
       <!-- Encabezado de la Plataforma -->
       <header class="app-header">
         <div class="header-top-bar">
+          <!--
           <div class="brand-badge" id="liveStatusBadge" title="Conexión en vivo con api-dolar.leandrus.net">
             <span class="status-dot"></span>
             <span id="liveStatusText">Tasas en Vivo</span>
           </div>
+          -->
           <button type="button" id="btnOpenAlerts" class="btn-header-alerts" title="Configurar Alertas Web Push"
             aria-label="Configurar alertas push de tasas">
-            <svg class="alerts-icon" width="13" height="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="alerts-icon" width="13" height="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
@@ -473,8 +475,8 @@
       <div class="modal-header">
         <div class="alerts-modal-header-title">
           <div class="alerts-header-icon-wrap">
-            <svg class="modal-header-icon" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="modal-header-icon" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
@@ -498,7 +500,8 @@
         <div class="alerts-master-card">
           <div class="alerts-master-info">
             <span class="alerts-master-title">Activar Alertas</span>
-            <span class="alerts-master-desc">Recibe avisos inmediatos en tu navegador cuando existan cambios relevantes en las tasas.</span>
+            <span class="alerts-master-desc">Recibe avisos inmediatos en tu navegador cuando existan cambios relevantes
+              en las tasas.</span>
           </div>
           <label class="switch-toggle" for="pushMasterToggle">
             <input type="checkbox" id="pushMasterToggle">
@@ -508,19 +511,21 @@
 
         <!-- Estado de sincronización / Permisos -->
         <div id="pushStatusText" class="alerts-status-box" role="status">
-          <span class="status-idle">⚪ Alertas desactivadas. Activa el interruptor para recibir avisos instantáneos.</span>
+          <span class="status-idle">⚪ Alertas desactivadas. Activa el interruptor para recibir avisos
+            instantáneos.</span>
         </div>
 
         <!-- Panel de Opciones de Alertas (desplegable / condicional) -->
         <div id="alertsOptionsPanel" class="alerts-options-section disabled-panel">
-          
+
           <!-- Opción 1: Próximo BCV -->
           <div class="alert-option-item" id="bcvOptionItem">
             <div class="alert-option-header">
               <div class="alert-option-title-wrap">
                 <div class="alert-option-icon bcv">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
                 </div>
                 <div>
@@ -534,7 +539,8 @@
               </label>
             </div>
             <p class="alert-option-desc">
-              Te avisaremos cuando se publique oficialmente el precio del BCV para el próximo período, detallando la nueva cotización y su porcentaje de cambio (%).
+              Te avisaremos cuando se publique oficialmente el precio del BCV para el próximo período, detallando la
+              nueva cotización y su porcentaje de cambio (%).
             </p>
           </div>
 
@@ -543,7 +549,8 @@
             <div class="alert-option-header">
               <div class="alert-option-title-wrap">
                 <div class="alert-option-icon usdt">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                     <polyline points="17 6 23 6 23 12"></polyline>
                   </svg>
@@ -562,7 +569,8 @@
               Mostrar alertas ante variaciones del USDT que superen tu porcentaje de sensibilidad seleccionado:
             </p>
             <!-- Selector de Umbrales Requeridos: 1%, 2%, 5%, 10% y 25% -->
-            <div class="threshold-selector" id="usdtThresholdSelector" role="group" aria-label="Umbral de fluctuación de USDT">
+            <div class="threshold-selector" id="usdtThresholdSelector" role="group"
+              aria-label="Umbral de fluctuación de USDT">
               <button type="button" class="threshold-pill" data-threshold="1">±1%</button>
               <button type="button" class="threshold-pill active" data-threshold="2">±2%</button>
               <button type="button" class="threshold-pill" data-threshold="5">±5%</button>
@@ -573,8 +581,10 @@
 
           <!-- Botón de prueba instantánea -->
           <div class="alert-test-section">
-            <button type="button" id="btnTestPush" class="btn-test-alert" title="Enviar notificación de prueba a este navegador">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button type="button" id="btnTestPush" class="btn-test-alert"
+              title="Enviar notificación de prueba a este navegador">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
               </svg>
               <span>Enviar Alerta de Prueba</span>
@@ -583,19 +593,11 @@
           </div>
 
         </div>
-
-        <!-- Nota de privacidad y cero rastreo -->
-        <div class="alerts-privacy-note">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <span>100% Anónimo: Sin bases de datos complejas ni seguimiento invasivo. Puedes activar o desactivar las alertas cuando gustes.</span>
-        </div>
       </div>
 
       <div class="modal-footer">
-        <button id="alertsModalDone" type="button" class="btn btn-primary" style="width: auto; padding: 0.65rem 1.5rem;">Guardar y Listo</button>
+        <button id="alertsModalDone" type="button" class="btn btn-primary"
+          style="width: auto; padding: 0.65rem 1.5rem;">Guardar y Listo</button>
       </div>
     </div>
   </div>
