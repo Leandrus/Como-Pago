@@ -107,7 +107,12 @@ function initDomReferences() {
     legalModalTitle: document.getElementById('legalModalTitle'),
     legalModalContent: document.getElementById('legalModalContent'),
     legalModalClose: document.getElementById('legalModalClose'),
-    legalModalAccept: document.getElementById('legalModalAccept')
+    legalModalAccept: document.getElementById('legalModalAccept'),
+
+    // Modal de Guía y Casos de Uso
+    btnOpenGuide: document.getElementById('btnOpenGuide'),
+    guideModal: document.getElementById('guideModal'),
+    guideModalClose: document.getElementById('guideModalClose')
   };
 }
 
@@ -609,6 +614,24 @@ function closeLegalModal() {
   document.body.style.overflow = '';
 }
 
+/**
+ * Abre el modal de guía de uso
+ */
+function openGuideModal() {
+  if (!els.guideModal) return;
+  els.guideModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Cierra el modal de guía de uso
+ */
+function closeGuideModal() {
+  if (!els.guideModal) return;
+  els.guideModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
 let toastTimeout = null;
 
 /**
@@ -979,7 +1002,7 @@ function bindEvents() {
     });
   }
 
-  // Botones para copiar montos en Bolívares
+  // Botones para copiar montos (Dólares y Bolívares)
   document.querySelectorAll('.btn-copy-val').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -991,20 +1014,25 @@ function bindEvents() {
       const rawVal = input.value.trim();
       if (!rawVal || parseFloat(rawVal) <= 0) return;
 
+      const originalTitle = btn.getAttribute('title') || (targetId && targetId.includes('usd') ? 'Copiar monto en $' : 'Copiar monto en Bs');
+
       try {
         await navigator.clipboard.writeText(rawVal);
         btn.classList.add('copied');
         btn.setAttribute('title', '¡Copiado!');
         setTimeout(() => {
           btn.classList.remove('copied');
-          btn.setAttribute('title', 'Copiar monto en Bs');
+          btn.setAttribute('title', originalTitle);
         }, 1800);
       } catch (err) {
         // Fallback clásico con execCommand si clipboard API falla
         input.select();
         document.execCommand('copy');
         btn.classList.add('copied');
-        setTimeout(() => btn.classList.remove('copied'), 1800);
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.setAttribute('title', originalTitle);
+        }, 1800);
       }
     });
   });
@@ -1060,11 +1088,21 @@ function bindEvents() {
     });
   }
 
+  // Modal de Guía y Funcionamiento
+  if (els.btnOpenGuide) els.btnOpenGuide.addEventListener('click', openGuideModal);
+  if (els.guideModalClose) els.guideModalClose.addEventListener('click', closeGuideModal);
+  if (els.guideModal) {
+    els.guideModal.addEventListener('click', (e) => {
+      if (e.target === els.guideModal) closeGuideModal();
+    });
+  }
+
   // Tecla Esc para cerrar cualquier modal
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeLegalModal();
       closeHistoryModal();
+      closeGuideModal();
       hideDateToast();
       const alertsModal = document.getElementById('alertsModal');
       if (alertsModal && alertsModal.classList.contains('active')) {

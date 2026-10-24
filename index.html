@@ -89,78 +89,29 @@
       <!-- Encabezado de la Plataforma -->
       <header class="app-header">
         <div class="header-top-bar">
-          <!--
-          <div class="brand-badge" id="liveStatusBadge" title="Conexión en vivo con api-dolar.leandrus.net">
-            <span class="status-dot"></span>
-            <span id="liveStatusText">Tasas en Vivo</span>
-          </div>
-          -->
+          <button type="button" id="btnOpenGuide" class="btn-header-guide" title="¿Cómo funciona y casos de uso cotidianos?"
+            aria-label="Abrir guía de funcionamiento y casos de uso">
+            <svg class="guide-btn-icon" width="13" height="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span class="btn-header-guide-label">¿Cómo funciona?</span>
+          </button>
+
           <button type="button" id="btnOpenAlerts" class="btn-header-alerts" title="Configurar Alertas Web Push"
             aria-label="Configurar alertas push de tasas">
+            <span id="alertsBadgeDot" class="alerts-badge-dot" aria-hidden="true"></span>
+            <span class="btn-header-alerts-label">Alertas</span>
             <svg class="alerts-icon" width="13" height="13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
-            <span class="btn-header-alerts-label">Alertas</span>
-            <span id="alertsBadgeDot" class="alerts-badge-dot" aria-hidden="true"></span>
           </button>
         </div>
         <h1 class="app-title">¿Cómo Pago?</h1>
-
-        <!-- Guía Desplegable: Casos de Uso y Funcionamiento -->
-        <details class="guide-card" id="guideAccordion">
-          <summary class="guide-toggle">
-            <span class="guide-toggle-label">
-              <svg class="guide-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
-              ¿Cómo funciona y casos de uso cotidianos?
-            </span>
-            <svg class="guide-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </summary>
-          <div class="guide-content">
-            <p class="guide-intro">
-              Compara al instante si te conviene pagar en <strong>Bolívares (Tasa
-                BCV)</strong> o en <strong>Dólares (Efectivo/USDT)</strong> y conoce tu ahorro real.
-            </p>
-            <div class="guide-step">
-              <span class="guide-step-num">1</span>
-              <div class="guide-step-body">
-                <strong>Efectivo y USDT son lo mismo:</strong> En el mercado venezolano, 1 Dólar físico equivale a 1
-                USDT y ambos se cotizan a la tasa paralelo. No requieres cálculos distintos.
-              </div>
-            </div>
-            <div class="guide-step">
-              <span class="guide-step-num">2</span>
-              <div class="guide-step-body">
-                <strong>Evaluar descuentos comerciales:</strong> Si te dicen: <em>"$50 a tasa BCV o $45 si pagas en
-                  dólares"</em>, la app compara ambas opciones y te dice en cuál desembolsas menos dinero real.
-              </div>
-            </div>
-            <div class="guide-step">
-              <span class="guide-step-num">3</span>
-              <div class="guide-step-body">
-                <strong>Ahorro inmediato y directo:</strong> Sabrás con exactitud cuántos Bolívares y Dólares estás
-                ahorrando antes de pagar.
-              </div>
-            </div>
-            <div class="guide-step">
-              <span class="guide-step-num">4</span>
-              <div class="guide-step-body">
-                <strong>Tasas en vivo y editables:</strong> Se sincronizan automáticamente con
-                <em>api-dolar.leandrus.net</em> y puedes pulsar sobre cualquiera de ellas para adaptarla a la tasa de tu
-                tienda.
-              </div>
-            </div>
-          </div>
-        </details>
       </header>
 
       <main>
@@ -302,17 +253,23 @@
               </label>
               <div class="offer-dual-inputs">
                 <div class="input-with-icon" title="Monto en Dólares ($)">
-                  <button type="button" class="btn-clear-val" id="btnClearOffer1" data-clear="offer1"
-                    title="Limpiar montos de Opción 1" aria-label="Limpiar montos de Opción 1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
                   <span class="input-prefix" style="color: #34d399;">$</span>
-                  <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv has-clear"
+                  <input type="number" step="any" id="price_bcv_usd_input" class="input-control input-usd-bcv"
                     placeholder="0.00" aria-label="Monto en dólares a tasa oficial">
+                  <div class="input-suffix-actions">
+                    <button type="button" class="btn-copy-val" data-target="price_bcv_usd_input"
+                      title="Copiar monto en $" aria-label="Copiar monto en dólares a tasa oficial">
+                      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
                   <input type="number" step="any" id="price_bcv_ves_input" class="input-control input-ves"
@@ -333,6 +290,14 @@
                     </button>
                   </div>
                 </div>
+                <button type="button" class="btn-clear-val" id="btnClearOffer1" data-clear="offer1"
+                  title="Limpiar montos de Opción 1" aria-label="Limpiar montos de Opción 1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -347,18 +312,24 @@
               </label>
               <div class="offer-dual-inputs">
                 <div class="input-with-icon" title="Monto en Dólares ($)">
-                  <button type="button" class="btn-clear-val" id="btnClearOffer2" data-clear="offer2"
-                    title="Limpiar montos de Opción 2" aria-label="Limpiar montos de Opción 2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
                   <span class="input-prefix" style="color: #fcd34d;">$</span>
                   <input type="number" step="any" id="price_parallel_usd_input"
-                    class="input-control input-usd-avg has-clear" placeholder="0.00"
+                    class="input-control input-usd-avg" placeholder="0.00"
                     aria-label="Monto en dólares en efectivo o USDT">
+                  <div class="input-suffix-actions">
+                    <button type="button" class="btn-copy-val" data-target="price_parallel_usd_input"
+                      title="Copiar monto en $" aria-label="Copiar monto en dólares en efectivo o USDT">
+                      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="input-with-icon" title="Equivalente en Bolívares (Bs)">
                   <input type="number" step="any" id="price_parallel_ves_input" class="input-control input-ves"
@@ -379,6 +350,14 @@
                     </button>
                   </div>
                 </div>
+                <button type="button" class="btn-clear-val" id="btnClearOffer2" data-clear="offer2"
+                  title="Limpiar montos de Opción 2" aria-label="Limpiar montos de Opción 2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -468,6 +447,151 @@
   </div>
 
   <!-- ============================================== -->
+  <!-- MODAL DE GUÍA Y CASOS DE USO COTIDIANOS (SPA) -->
+  <!-- ============================================== -->
+  <div id="guideModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle">
+    <div class="modal-dialog guide-modal-dialog">
+      <div class="modal-header">
+        <div class="guide-modal-header-title">
+          <div class="guide-header-icon-wrap">
+            <svg class="modal-header-icon" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 id="guideModalTitle" class="modal-title">¿Cómo Funciona?</h2>
+            <p class="modal-subtitle">Guía financiera práctica y casos de uso cotidianos en Venezuela</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body guide-modal-body">
+
+        <!-- Tarjeta de Contexto Principal -->
+        <div class="guide-highlight-card">
+          <div class="guide-highlight-badge">💡 El dilema financiero cotidiano</div>
+          <p class="guide-highlight-text">
+            En Venezuela conviven dos cotizaciones esenciales: la <strong>Tasa Oficial del BCV</strong> y la <strong>Tasa de Mercado (Binance USDT / Paralelo)</strong>.
+            Dependiendo del método y la moneda en que realices cada pago, puedes ahorrar o perder dinero real. Esta herramienta calcula al instante la opción exacta más conveniente para tu bolsillo.
+          </p>
+        </div>
+
+        <!-- Sección: Pilares Fundamentales -->
+        <h3 class="guide-section-title">Conceptos Clave del Mercado</h3>
+        <div class="guide-pillars-grid">
+          <div class="guide-pillar-card">
+            <div class="guide-pillar-icon bcv">🏛️</div>
+            <div class="guide-pillar-body">
+              <strong>1. Cotización a Tasa BCV (Opción 1)</strong>
+              <p>Es la cotización obligatoria en comercios formales. Los precios se expresan en dólares pero se cancelan en <strong>Bolívares (Bs.)</strong> por punto de venta, pago móvil o biopago según la tasa oficial.</p>
+            </div>
+          </div>
+
+          <div class="guide-pillar-card">
+            <div class="guide-pillar-icon usdt">💵</div>
+            <div class="guide-pillar-body">
+              <strong>2. Dólar Físico y USDT son lo mismo (Opción 2)</strong>
+              <p>En el mercado venezolano, <strong>1 dólar en efectivo equivale a 1 USDT</strong> en Binance P2P. Ambos cotizan a la tasa libre o paralelo, por lo que aplican exactamente las mismas fórmulas.</p>
+            </div>
+          </div>
+
+          <div class="guide-pillar-card">
+            <div class="guide-pillar-icon calc">📊</div>
+            <div class="guide-pillar-body">
+              <strong>3. La Comparación Matemática</strong>
+              <p>Cruzamos ambas cotizaciones en tiempo real para determinar en cuál alternativa desembolsas menos valor de tu patrimonio, indicando tu <strong>ahorro exacto</strong> en Bolívares y Dólares.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Casos de Uso Cotidianos -->
+        <h3 class="guide-section-title">Casos de Uso Cotidianos</h3>
+        <div class="guide-cases-list">
+
+          <!-- Caso 1 -->
+          <article class="guide-case-card">
+            <div class="guide-case-header">
+              <span class="guide-case-tag">Caso 1</span>
+              <h4 class="guide-case-title">Evaluar "Descuentos" en Efectivo o Binance USDT</h4>
+            </div>
+            <p class="guide-case-desc">
+              Un producto tiene un precio marcado de <strong>$50 a tasa BCV</strong> y el encargado te ofrece: <em>"Si pagas $45 en efectivo o USDT te lo dejamos en 45"</em>.
+            </p>
+            <div class="guide-case-tip">
+              <strong>¿Cómo usar la app?</strong> Escribe 50 en la Opción 1 y 45 en la Opción 2. Si la brecha entre el BCV y el paralelo es amplia (por ejemplo 15%), pagar $50 a tasa oficial en bolívares equivale a solo $43.5 dólares paralelos. ¡Pagar $45 directos sería más costoso! La app te advierte de inmediato si el descuento realmente te conviene.
+            </div>
+          </article>
+
+          <!-- Caso 2 -->
+          <article class="guide-case-card">
+            <div class="guide-case-header">
+              <span class="guide-case-tag">Caso 2</span>
+              <h4 class="guide-case-title">Vender USDT para pagar en Bolívares (Arbitraje cotidiano)</h4>
+            </div>
+            <p class="guide-case-desc">
+              Tienes ingresos o ahorros en Binance USDT y vas a pagar una cuenta en un supermercado o farmacia facturada a tasa BCV.
+            </p>
+            <div class="guide-case-tip">
+              <strong>Estrategia de ahorro:</strong> En lugar de pagar en divisas en caja, vende tus USDT en Binance P2P a tasa paralelo y abona la cuenta en Bolívares por Pago Móvil a tasa BCV. Necesitarás vender notablemente menos dólares para cubrir el mismo gasto.
+            </div>
+          </article>
+
+          <!-- Caso 3 -->
+          <article class="guide-case-card">
+            <div class="guide-case-header">
+              <span class="guide-case-tag">Caso 3</span>
+              <h4 class="guide-case-title">Comparar dos presupuestos o proveedores distintos</h4>
+            </div>
+            <p class="guide-case-desc">
+              Un proveedor te cotiza un servicio en <strong>$120 a tasa BCV</strong> y otro proveedor te pide <strong>$100 netos en divisas</strong>.
+            </p>
+            <div class="guide-case-tip">
+              Ingresas ambas cantidades en la Opción 1 y Opción 2. En un segundo tendrás el veredicto definitivo de cuál desembolso real representa el menor esfuerzo económico.
+            </div>
+          </article>
+
+          <!-- Caso 4 -->
+          <article class="guide-case-card">
+            <div class="guide-case-header">
+              <span class="guide-case-tag">Caso 4</span>
+              <h4 class="guide-case-title">Aprovechar el "Próximo BCV"</h4>
+            </div>
+            <p class="guide-case-desc">
+              En las tardes hábiles bancarias el BCV publica la cotización que regirá el día siguiente (o el lunes siguiente).
+            </p>
+            <div class="guide-case-tip">
+              Pulsa el botón <strong>"Próximo BCV"</strong> en la barra superior. Si la tasa va a subir, sabrás al instante si es mejor comprar hoy en bolívares antes de que suban los montos en caja.
+            </div>
+          </article>
+
+          <!-- Caso 5 -->
+          <article class="guide-case-card">
+            <div class="guide-case-header">
+              <span class="guide-case-tag">Caso 5</span>
+              <h4 class="guide-case-title">Ajustar cotizaciones personalizadas</h4>
+            </div>
+            <p class="guide-case-desc">
+              ¿Tu comercio, negocio local o zona maneja una tasa propia o un promedio particular?
+            </p>
+            <div class="guide-case-tip">
+              Las tarjetas de tasas son interactivas: pulsa sobre el número de la <strong>Tasa Oficial</strong> o <strong>Tasa Binance</strong> y escribe la cotización que desees para personalizar el cálculo a tu medida.
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="guideModalClose" type="button" class="btn btn-primary"
+          style="width: auto; padding: 0.65rem 1.6rem;">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
   <!-- MODAL DE AJUSTES DE NOTIFICACIONES Y ALERTAS PUSH -->
   <!-- ============================================== -->
   <div id="alertsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="alertsModalTitle">
@@ -486,13 +610,6 @@
             <p class="modal-subtitle">Notificaciones Web Push nativas y 100% anónimas</p>
           </div>
         </div>
-        <button id="alertsModalClose" class="modal-close-btn" aria-label="Cerrar modal de alertas">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
 
       <div class="modal-body alerts-modal-body">
@@ -609,13 +726,6 @@
     <div class="modal-dialog">
       <div class="modal-header">
         <h2 id="legalModalTitle" class="modal-title">Documento Legal</h2>
-        <button id="legalModalClose" class="modal-close-btn" aria-label="Cerrar modal">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div id="legalModalContent" class="modal-body">
         <!-- El contenido se inyecta dinámicamente -->
@@ -641,13 +751,6 @@
           </svg>
           <h2 id="historyModalTitle" class="modal-title">Historial y Fluctuación</h2>
         </div>
-        <button id="historyModalClose" class="modal-close-btn" aria-label="Cerrar modal de historial">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
 
       <div class="modal-body history-modal-body">
@@ -722,6 +825,10 @@
           </div>
         </div>
       </div>
+      <div class="modal-footer">
+        <button id="historyModalClose" type="button" class="btn btn-secondary"
+          style="width: auto; padding: 0.6rem 1.4rem;">Cerrar</button>
+      </div>
     </div>
   </div>
 
@@ -757,13 +864,6 @@
     <div class="cmp-modal-dialog">
       <div class="cmp-modal-header">
         <h3 id="cmpModalTitle" class="cmp-modal-title">Preferencias de Almacenamiento</h3>
-        <button id="cmp-modal-close" class="cmp-modal-close" aria-label="Cerrar configuración">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div class="cmp-modal-body">
         <p class="cmp-modal-intro">

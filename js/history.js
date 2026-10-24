@@ -192,9 +192,9 @@ export function calculateMetrics(rates) {
 /**
  * Renderiza el gráfico interactivo nativo en formato SVG
  */
-export function renderHistoryChart(containerEl, rates, period) {
+export function renderHistoryChart(containerEl, rawRates, period) {
   if (!containerEl) return;
-  if (!rates || rates.length < 2) {
+  if (!rawRates || rawRates.length < 2) {
     containerEl.innerHTML = `
       <div class="chart-empty-state">
         <p>No hay suficientes datos registrados para el período seleccionado.</p>
@@ -203,10 +203,30 @@ export function renderHistoryChart(containerEl, rates, period) {
     return;
   }
 
-  // Dimensiones del canvas virtual SVG
+  // Normalizar y mantener continuidad: en fines de semana y feriados la tasa oficial BCV
+  // se mantiene legalmente vigente desde la última jornada bancaria hábil
+  let lastValidBcv = null;
+  for (let i = 0; i < rawRates.length; i++) {
+    if (typeof rawRates[i].bcv === 'number' && rawRates[i].bcv > 0) {
+      lastValidBcv = rawRates[i].bcv;
+      break;
+    }
+  }
+
+  const rates = rawRates.map(r => {
+    let bcv = r.bcv;
+    if (typeof bcv === 'number' && bcv > 0) {
+      lastValidBcv = bcv;
+    } else if (lastValidBcv !== null) {
+      bcv = lastValidBcv;
+    }
+    return { ...r, bcv };
+  });
+
+  // Dimensiones del canvas virtual SVG con proporciones optimizadas
   const width = 600;
-  const height = 280;
-  const padding = { top: 25, right: 20, bottom: 40, left: 55 };
+  const height = 300;
+  const padding = { top: 30, right: 30, bottom: 45, left: 75 };
   const chartW = width - padding.left - padding.right;
   const chartH = height - padding.top - padding.bottom;
 
@@ -229,7 +249,7 @@ export function renderHistoryChart(containerEl, rates, period) {
     minY = Math.max(0, minY - 10);
     maxY = maxY + 10;
   } else {
-    // Margen del 5% superior e inferior para que las líneas respiren
+    // Margen del 8% superior e inferior para que las curvas respiren holgadamente
     const range = maxY - minY;
     minY = Math.max(0, minY - range * 0.08);
     maxY = maxY + range * 0.08;
@@ -259,7 +279,7 @@ export function renderHistoryChart(containerEl, rates, period) {
   const bcvPath = pathD(pointsBcv);
   const usdtPath = pathD(pointsUsdt);
 
-  // Crear área de sombreado entre ambas curvas (spread gap)
+  // Crear área continua de sombreado entre ambas curvas (spread gap)
   let spreadAreaPath = '';
   if (pointsBcv.length > 0 && pointsUsdt.length > 0) {
     const paired = [];
@@ -275,15 +295,15 @@ export function renderHistoryChart(containerEl, rates, period) {
     }
   }
 
-  // Líneas de cuadrícula horizontal (3 líneas)
+  // Líneas de cuadrícula horizontal (4 intervalos, 5 líneas)
   const gridSteps = 4;
   let gridLinesSvg = '';
   for (let i = 0; i <= gridSteps; i++) {
     const yVal = minY + (i / gridSteps) * (maxY - minY);
     const yPos = getY(yVal);
     gridLinesSvg += `
-      <line x1="${padding.left}" y1="${yPos.toFixed(1)}" x2="${width - padding.right}" y2="${yPos.toFixed(1)}" stroke="rgba(255, 255, 255, 0.07)" stroke-dasharray="3,3" />
-      <text x="${padding.left - 8}" y="${(yPos + 4).toFixed(1)}" fill="#94a3b8" font-size="11" text-anchor="end" font-family="Inter, sans-serif">Bs. ${yVal >= 100 ? yVal.toFixed(0) : yVal.toFixed(1)}</text>
+      <line x1="${padding.left}" y1="${yPos.toFixed(1)}" x2="${width - padding.right}" y2="${yPos.toFixed(1)}" stroke="rgba(255, 255, 255, 0.08)" stroke-dasharray="3,3" />
+      <text x="${padding.left - 10}" y="${(yPos + 4).toFixed(1)}" fill="#94a3b8" font-size="11" text-anchor="end" font-family="Inter, sans-serif">Bs. ${yVal >= 100 ? yVal.toFixed(0) : yVal.toFixed(1)}</text>
     `;
   }
 
@@ -298,33 +318,33 @@ export function renderHistoryChart(containerEl, rates, period) {
       const xPos = getX(idx);
       const dStr = formatShortDate(rates[idx].date);
       dateLabelsSvg += `
-        <text x="${xPos.toFixed(1)}" y="${height - 12}" fill="#94a3b8" font-size="10.5" text-anchor="middle" font-family="Inter, sans-serif">${dStr}</text>
+        <text x="${xPos.toFixed(1)}" y="${height - 14}" fill="#94a3b8" font-size="10.5" text-anchor="middle" font-family="Inter, sans-serif">${dStr}</text>
       `;
     }
   });
 
   // Generar HTML completo con el SVG interactivo y tooltip
   containerEl.innerHTML = `
-    <div class="chart-wrapper" style="position: relative; width: 100%;">
+    <div class="chart-wrapper">
       <svg viewBox="0 0 ${width} ${height}" class="history-svg" preserveAspectRatio="xMidYMid meet" id="historySvg">
         <defs>
           <linearGradient id="spreadGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.28" />
-            <stop offset="100%" stop-color="#10b981" stop-opacity="0.08" />
+            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.32" />
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.10" />
           </linearGradient>
           <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#10b981" flood-opacity="0.4" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#10b981" flood-opacity="0.45" />
           </filter>
           <filter id="glowAmber" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#f59e0b" flood-opacity="0.4" />
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#f59e0b" flood-opacity="0.45" />
           </filter>
         </defs>
 
-        <!-- Cuadrícula -->
+        <!-- Cuadrícula y Etiquetas -->
         ${gridLinesSvg}
         ${dateLabelsSvg}
 
-        <!-- Área de brecha -->
+        <!-- Área de brecha cambiaria continua -->
         ${spreadAreaPath ? `<path d="${spreadAreaPath}" fill="url(#spreadGrad)" />` : ''}
 
         <!-- Línea BCV (Verde) -->
@@ -335,14 +355,14 @@ export function renderHistoryChart(containerEl, rates, period) {
 
         <!-- Indicador Interactivo (Scrubber Crosshair) -->
         <g id="chartScrubber" style="display: none;">
-          <line id="scrubberLine" x1="0" y1="${padding.top}" x2="0" y2="${padding.top + chartH}" stroke="rgba(255, 255, 255, 0.4)" stroke-width="1.5" stroke-dasharray="4,3" />
+          <line id="scrubberLine" x1="0" y1="${padding.top}" x2="0" y2="${padding.top + chartH}" stroke="rgba(255, 255, 255, 0.45)" stroke-width="1.5" stroke-dasharray="4,3" />
           <circle id="scrubberDotUsdt" cx="0" cy="0" r="5" fill="#f59e0b" stroke="#090d16" stroke-width="2" />
           <circle id="scrubberDotBcv" cx="0" cy="0" r="5" fill="#10b981" stroke="#090d16" stroke-width="2" />
         </g>
       </svg>
 
       <!-- Tooltip Flotante de Alta Precisión -->
-      <div id="chartTooltip" class="chart-tooltip" style="display: none; position: absolute; pointer-events: none; z-index: 20;"></div>
+      <div id="chartTooltip" class="chart-tooltip" style="display: none; position: absolute; pointer-events: none; z-index: 25;"></div>
     </div>
   `;
 
@@ -364,7 +384,7 @@ function setupChartInteractivity(containerEl, rates, padding, chartW, minY, maxY
   if (!svg || !scrubber || !tooltip) return;
 
   const n = rates.length;
-  const height = 280;
+  const height = 300;
   const chartH = height - padding.top - padding.bottom;
   const getY = (val) => padding.top + chartH - ((val - minY) / (maxY - minY)) * chartH;
 
@@ -427,15 +447,35 @@ function setupChartInteractivity(containerEl, rates, padding, chartW, minY, maxY
 
     tooltip.style.display = 'block';
 
-    // Posicionar el tooltip respecto al contenedor HTML
+    // Posicionar el tooltip horizontalmente sin salirse del área
     const xPixel = (xSvg / 600) * rect.width;
-    const tooltipWidth = 160;
+    const tooltipWidth = tooltip.offsetWidth || 160;
+    const tooltipHeight = tooltip.offsetHeight || 95;
+
     let leftPos = xPixel - (tooltipWidth / 2);
-    if (leftPos < 10) leftPos = 10;
-    if (leftPos + tooltipWidth > rect.width - 10) leftPos = rect.width - tooltipWidth - 10;
+    if (leftPos < 8) leftPos = 8;
+    if (leftPos + tooltipWidth > rect.width - 8) leftPos = rect.width - tooltipWidth - 8;
+
+    // Posicionamiento vertical adaptativo para no ocultar las líneas ni el área de brecha
+    const scaleY = rect.height / height;
+    const highestPointY = (record.usdt > 0 ? usdtY : bcvY) * scaleY;
+
+    let topPos;
+    if (highestPointY < tooltipHeight + 25) {
+      // Si el punto está en la parte superior, colocar el tooltip por debajo
+      const lowestPointY = (record.bcv > 0 ? bcvY : usdtY) * scaleY;
+      topPos = lowestPointY + 16;
+      if (topPos + tooltipHeight > rect.height - 10) {
+        topPos = 12;
+      }
+    } else {
+      // Colocar por encima del punto
+      topPos = highestPointY - tooltipHeight - 12;
+      if (topPos < 8) topPos = 8;
+    }
 
     tooltip.style.left = `${leftPos}px`;
-    tooltip.style.top = `10px`;
+    tooltip.style.top = `${topPos}px`;
   }
 
   function hideScrubber() {

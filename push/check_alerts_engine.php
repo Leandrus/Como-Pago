@@ -102,8 +102,8 @@ class AlertEngine {
                     $formattedRate = number_format($nextRate, 2, ',', '.') . ' Bs.';
 
                     $bcvPayload = [
-                        'title' => '🟢 Nueva Tasa Oficial BCV Publicada',
-                        'body' => "Vigente para el {$formattedDate}: {$formattedRate} ({$formattedPct}).",
+                        'title' => '🟢 BCV Publica Nueva Tasa Oficial.',
+                        'body' => "{$formattedRate} ({$formattedPct}). Vigente para el {$formattedDate}",
                         'icon' => './icons/icon-192x192.png',
                         'badge' => './icons/icon-192x192.png',
                         'tag' => 'bcv-next-' . $cleanDate,
@@ -165,8 +165,8 @@ class AlertEngine {
                     $prevFmt = number_format($prevRate, 2, ',', '.') . ' Bs.';
 
                     $usdtPayload = [
-                        'title' => "{$icon} Variación USDT: {$sign}{$pctChange}%",
-                        'body' => "El dólar Binance {$direction} a {$currentFmt} (antes {$prevFmt}).",
+                        'title' => "{$icon} USDT {$direction}.",
+                        'body' => "{$sign}{$pctChange}% = {$currentFmt} (antes {$prevFmt}).",
                         'icon' => './icons/icon-192x192.png',
                         'badge' => './icons/icon-192x192.png',
                         'tag' => 'usdt-change-' . time(),
